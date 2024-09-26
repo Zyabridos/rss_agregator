@@ -56,38 +56,35 @@ const updateState = () => {
   }
 };
 
-updateState();
-
-export default () => {
-  const watchedState = onChange(initState, (path, value, previousValue) => {
-    watchedState.form.currentState = 'new value';
-    console.log(`Путь "${path}" изменился с ${previousValue} на ${value}`);
+const initView = (state) => {
+  const watchedState = onChange(initState, (path) => {
+    if (path === 'form.isValid') {
+      initState.form.rssFeedsUrls.map((feed) => {
+        validateDublicates(feed, initState.form.rssFeedsUrls)
+          .then((error) => {
+            initState.form.error = error;
+            updateState();
+          })
+          .catch((error) => console.error(error));
+      });
+    }
   });
-
-  elements.input.addEventListener('input', () => {
-    initState.form.inputValues.name = elements.input.value;
-  });
-  // console.log(initState.form.inputValues.name);
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(elements.form);
     const data = Object.fromEntries(formData);
-    if (initState.form.error !== '') {
+    if (initState.form.error === '') {
       initState.form.currentState = 'sending';
       initState.form.rssFeedsUrls.push(data.url);
       initState.form.currentState = 'sent';
-      console.log(initState.form.rssFeedsUrls);
-      // console.log(initState.form.currentState);
-    } else { initState.form.currentState = 'filling'; }
+    }
+    updateState();
+    // console.log(initState.form.rssFeedsUrls);
+    // console.log(initState.form.currentState);
+    // console.log(data.url);
   });
-  // console.log(watchedState.form.currentState);
-  return initState.form.currentState;
-  // {
-  // handleProcessState: (currentState) => {
-  //   initState.form.currentState = currentState;
-  //   console.log(currentState);
-  // },
-  // };
+  return watchedState;
 };
-initView();
+
+export default initView();

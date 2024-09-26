@@ -1,6 +1,5 @@
 import './styles.scss';
 import 'bootstrap';
-import i18next from 'i18next';
 import * as yup from 'yup';
 import initView from './view.js';
 
@@ -15,25 +14,39 @@ const initState = {
     isValid: false,
   },
 };
-export const validateDublicates = (url) => {
-  const urls = initState.form.rssFeedsUrls;
-  console.log(urls);
+
+export const validateDublicates = (url, urls) => {
+  new Promise((resolve, reject) => {
+    if (urls.some((current) => current === url)) {
+      reject(new Error('RSS уже существует!'));
+    }
+  }).catch((error) => console.log(error));
 };
 
 const schema = yup.object({
-  name: yup
+  url: yup
     .string()
-    .url('The link must be a valid URL')
+    .trim()
+    .url('It is not an URL')
     .required('URL is required'),
 });
 
-export const yupValidation = (url) => schema
-  .validate(url, { abortEarly: false })
-  .then(() => {})
-  .catch((validationError) => {
-    const errors = validationError.inner.reduce((result, err) => {
-      result[err.path] = err.message;
-      return result;
-    }, {});
-    return Promise.reject(errors);
-  });
+export const yupValidation = (url) => {
+  schema.validate(url)
+    .then(() => console.log('Successfull Yup Validation'))
+    .catch((e) => {
+      const errors = e.inner.reduce((result, error) => {
+        const { path, message } = error;
+        result[path] = message;
+
+        return [
+          ...result,
+          { path: message },
+        ];
+      }, {});
+    });
+};
+
+console.log(yupValidation({ url: 'nof' }));
+
+console.log(yupValidation('nof'));
