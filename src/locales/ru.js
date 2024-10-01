@@ -1,3 +1,5 @@
+import i18next from 'i18next';
+
 export default {
   translation: {
     title: 'RSS агрегатор',
@@ -13,3 +15,17 @@ export default {
     submit: 'Добавить',
   },
 };
+
+i18next.init({
+  languages: {
+    en: 'English',
+    ru: 'Русский',
+  },
+  buttons: {
+    counter: {
+      count_one: '{{count}} click',
+      count_other: '{{count}} clicks',
+    },
+    reset: 'Reset',
+  },
+});
