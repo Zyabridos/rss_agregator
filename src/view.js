@@ -44,7 +44,9 @@ const caseFilling = () => {
   elements.input.focus();
 };
 
-const watch = (elements, state) => {
+const watch = (elements, i18n, state) => {
+  const { t } = i18n;
+
   const watchedState = onChange(state, (path, value) => {
     console.log(`path:${path}`);
     switch (path) {
@@ -59,7 +61,14 @@ const watch = (elements, state) => {
         break;
     }
   });
-  return watchedState;
+
+  const renderForm = () => {
+
+  };
+  return {
+    renderForm,
+    watchedState,
+  };
 };
 
 export default watch;

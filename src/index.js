@@ -1,33 +1,29 @@
 import './styles.scss';
 import 'bootstrap';
 import * as yup from 'yup';
+import i18next from 'i18next';
 import watch from './view.js';
-import rusLangTest from './locales/ru.js';
+import resources from './locales/ru.js';
+
+export const initState = {
+  form: {
+    // errors: '',
+    errors: {},
+    rssFeedsUrls: [],
+    currentState: 'filling',
+    currentInput: {
+      rssURL: '',
+    },
+    isValid: false,
+  },
+};
 
 const schema = yup.object({
-  url: yup.string().trim().url('It is not an URL').required('URL is required'),
+  url: yup.string().trim().url('It is not a valid URL').required('URL is required')
+    .test('Unique', 'RSS needs te be unique', (url) => new Set(url).size === url.length),
 });
 
-export const validateDublicates = async (url, urls) => new Promise((resolve, reject) => {
-  if (urls.some((current) => current === url)) {
-    reject(new Error('RSS уже существует!'));
-  }
-})
-  .catch((e) => console.log(e));
-
 const app = async () => {
-  const initState = {
-    form: {
-      error: '',
-      rssFeedsUrls: [],
-      currentState: 'filling',
-      currentInput: {
-        rssURL: '',
-      },
-      isValid: false,
-    },
-  };
-
   const elements = {
     form: document.querySelector('.rss-form.text-body'),
     input: document.querySelector('.form-control.w-100'),
@@ -36,42 +32,54 @@ const app = async () => {
     submitButton: document.querySelector('.h-100.btn.btn-lg.btn-primary'),
   };
 
-  const watchedState = watch(elements, initState);
+  const defaultLang = 'ru';
 
-  const yupValidation = async (url) => {
-    schema.validate(url)
-      .then(() => {
-        console.log('Successfull Yup Validation');
-      })
-      .catch((e) => {
-        const errors = Array.from(e.errors);
-        const validationError = errors.reduce((acc, current) => acc + current, []);
-        console.log(`Yup Validation error occured:${validationError}`);
-        watchedState.form.error = validationError;
-      });
-  };
+  const i18n = i18next.createInstance();
 
-  // elements.input.addEventListener('input', (e) => {
-  //   watchedState.form.currentInput.rssURL = e.target.value;
-  // });
+  i18next.init({
+    lng: defaultLang,
+    debug: true,
+    resources,
+  })
+    .then(() => console.log('i18n works...so far'));
+
+  yup.setLocale({
+    url: () => ({ key: 'feedbacks.feedbackInvalidUrl' }),
+    // url: () => ({ 0: { key: 'feedbacks.feedbackInvalidUrl' } }),
+    required: () => ({ key: 'feedbacks.feedbackEmpty' }),
+  });
+
+  const { watchedState, renderForm } = watch(elements, i18n, initState);
+
+  renderForm();
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(elements.form);
     const data = Object.fromEntries(formData);
-    yupValidation(data)
+    console.log(data);
+    schema.validate(data)
       .then(() => {
-        console.log('Succsessfult dublicates validation');
+        console.log('Yup Success Validation');
         watchedState.form.rssFeedsUrls.push((data.url));
         watchedState.form.isValid = true;
       })
-      // .then((a, b) => {
-      //   const currentInput = watchedState.form.currentInput.rssURL;
-      //   const listOfRSS = watchedState.form.rssFeedsUrls;
-      //   validateDublicates(currentInput, listOfRSS);
-      // })
+      .catch((yupError) => {
+        const { path, message } = yupError;
+        watchedState.form.errors[path] = message;
+      });
+    // .catch((err) => {
+    //   const validationErrors = err.inner.reduce((acc, cur) => {
+    //     const { path, message } = cur;
+    //     const errorData = acc[path] || [];
+    //     return { ...acc, [path]: [...errorData, message] };
+    //   }, {});
+    //   watchedState.form.errors = validationErrors;
+    // });
+    // console.log(new Set((watchedState.form.errors)));
+    console.log((watchedState.form.errors));
 
-      .catch((err) => console.error(`An error has occurred: ${err.message}`));
+    // .catch((err) => console.error(`An error has occurred: ${err.message}`));
   });
 };
 
