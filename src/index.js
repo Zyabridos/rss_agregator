@@ -3,12 +3,11 @@ import 'bootstrap';
 import * as yup from 'yup';
 import i18next from 'i18next';
 import watch from './view.js';
-import resources from './locales/ru.js';
+import resources from './locales/index.js';
 
 export const initState = {
   form: {
-    // errors: '',
-    errors: {},
+    errors: [],
     rssFeedsUrls: [],
     currentState: 'filling',
     currentInput: {
@@ -20,7 +19,7 @@ export const initState = {
 
 const schema = yup.object({
   url: yup.string().trim().url('It is not a valid URL').required('URL is required')
-    .test('Unique', 'RSS needs te be unique', (url) => new Set(url).size === url.length),
+    .test('unique', 'RSS needs te be unique', (url) => new Set(url).size === url.length),
 });
 
 const app = async () => {
@@ -41,13 +40,17 @@ const app = async () => {
     debug: true,
     resources,
   })
-    .then(() => console.log('i18n works...so far'));
-
-  yup.setLocale({
-    url: () => ({ key: 'feedbacks.feedbackInvalidUrl' }),
-    // url: () => ({ 0: { key: 'feedbacks.feedbackInvalidUrl' } }),
-    required: () => ({ key: 'feedbacks.feedbackEmpty' }),
-  });
+    .then(() => console.log('i18n works...so far'))
+    .then(() => {
+      yup.setLocale({
+        mixed: {
+          // required: () => ({ key: 'errors.validation.required' }),
+          required: () => ({ 0: 'errors.validation.required' }),
+          url: () => ({ key: 'errors.validation.required' }),
+          unique: () => ({ key: 'errors.validation.repeat' }),
+        },
+      });
+    });
 
   const { watchedState, renderForm } = watch(elements, i18n, initState);
 
@@ -55,31 +58,24 @@ const app = async () => {
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
+
     const formData = new FormData(elements.form);
     const data = Object.fromEntries(formData);
-    console.log(data);
-    schema.validate(data)
+    schema.validate(data, { abortEarly: false })
       .then(() => {
         console.log('Yup Success Validation');
         watchedState.form.rssFeedsUrls.push((data.url));
         watchedState.form.isValid = true;
       })
       .catch((yupError) => {
-        const { path, message } = yupError;
-        watchedState.form.errors[path] = message;
-      });
-    // .catch((err) => {
-    //   const validationErrors = err.inner.reduce((acc, cur) => {
-    //     const { path, message } = cur;
-    //     const errorData = acc[path] || [];
-    //     return { ...acc, [path]: [...errorData, message] };
-    //   }, {});
-    //   watchedState.form.errors = validationErrors;
-    // });
-    // console.log(new Set((watchedState.form.errors)));
-    console.log((watchedState.form.errors));
+        const validationErrors = yupError.errors;
+        watchedState.form.errors.push(validationErrors);
+        watchedState.form.isValid = false;
+        // console.log(watchedState.form.errors);
+      })
 
-    // .catch((err) => console.error(`An error has occurred: ${err.message}`));
+      .catch((err) => console.error(`An error has occurred: ${err.message}`));
+    console.log(watchedState.form.errors[0]);
   });
 };
 

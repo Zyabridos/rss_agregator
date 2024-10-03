@@ -1,4 +1,6 @@
 import onChange from 'on-change';
+import i18next from 'i18next';
+import resourses from './locales/index.js';
 
 const elements = {
   form: document.querySelector('.rss-form.text-body'),
@@ -63,7 +65,16 @@ const watch = (elements, i18n, state) => {
   });
 
   const renderForm = () => {
-
+    // i18next.init({
+    //   resourses,
+    // })
+    //   .then(() => {
+    //     const { t } = i18next;
+    //     const title = document.createElement('h2');
+    //     title.classList.add('text-white');
+    //     title.textContent = t('title');
+    //     elements.form.append(title);
+    //   });
   };
   return {
     renderForm,

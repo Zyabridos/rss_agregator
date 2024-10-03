@@ -1,5 +1,3 @@
-import i18next from 'i18next';
-
 export default {
   translation: {
     languages: {
@@ -8,12 +6,18 @@ export default {
     title: 'RSS агрегатор',
     subtitle: 'Начните читать RSS сегодня! Это легко, это красиво.',
     inputField: 'Ссылка RSS',
-    feedbacks: {
-      feedbackSuccess: 'RSS успешно загружен',
-      feedbackInvalidUrl: 'Ссылка должна быть валидным URL',
-      feedbackRepeat: 'RSS уже существует',
-      feedbackEmpty: 'Не должно быть пустым',
-    },
     submit: 'Добавить',
+    errors: {
+      validation: {
+        required: 'Не должно быть пустым',
+        invalidURL: 'Ссылка должна быть валидным URL',
+        repeat: 'RSS уже существует',
+      },
+    },
+    success: {
+      validation: {
+        sucsessRSSValidation: 'RSS успешно загружен',
+      },
+    },
   },
 };
