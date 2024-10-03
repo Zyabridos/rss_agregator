@@ -58,11 +58,21 @@ const watch = (elements, i18n, state) => {
       case ('form.error'):
         caseInvalidRSS();
         break;
+      case ('feed'):
+        renderFeed();
       default:
         // throw new Error('unknown form status');
         break;
     }
   });
+
+  renderPosts = () => {
+
+  };
+
+  renderFeeg = () => {
+
+  };
 
   const renderForm = () => {
     // i18next.init({

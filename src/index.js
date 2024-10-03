@@ -7,21 +7,37 @@ import resources from './locales/index.js';
 
 export const initState = {
   form: {
-    errors: [],
+    errors: [erros.validation.key],
     rssFeedsUrls: [],
     currentState: 'filling',
-    currentInput: {
-      rssURL: '',
-    },
     isValid: false,
   },
+  feeds: [],
+  posts: [
+    {title: 'aa', description:  "bb"},
+    {title: 'aa', description:  "bb"},
+    {title: 'aa', description:  "bb"},
+    {title: 'aa', description:  "bb"},
+  ]
 };
 
-const schema = yup.object({
-  url: yup.string().trim().url('It is not a valid URL').required('URL is required')
-    .test('unique', 'RSS needs te be unique', (url) => new Set(url).size === url.length),
-});
+1. Пользователь ввел url
+2. Валидация урла
+3. Валидный url - отсылаем  запрос axios 
+4. response.data (от axios)
+5, Распарсили данные
+5& В этом документе ао селекторам получаем данные
 
+const schema = yup.string().trim().url('It is not a valid URL').required('errors.validation.required');
+// .test('unique', 'RSS needs te be unique', (url) => new Set(url).size === url.length);
+const validateESS = (url, urls) => {
+  scema = yup.string().trim().url('It is not a valid URL').required('errors.validation.required')
+    .notOne(urls);
+
+  schema.validate()
+    .then(validate, add to URLS)
+    .catch();
+};
 const app = async () => {
   const elements = {
     form: document.querySelector('.rss-form.text-body'),
@@ -30,7 +46,7 @@ const app = async () => {
     feedback: document.querySelector('.feedback.m-0'),
     submitButton: document.querySelector('.h-100.btn.btn-lg.btn-primary'),
   };
-
+// валидный RSS
   const defaultLang = 'ru';
 
   const i18n = i18next.createInstance();
@@ -39,18 +55,7 @@ const app = async () => {
     lng: defaultLang,
     debug: true,
     resources,
-  })
-    .then(() => console.log('i18n works...so far'))
-    .then(() => {
-      yup.setLocale({
-        mixed: {
-          // required: () => ({ key: 'errors.validation.required' }),
-          required: () => ({ 0: 'errors.validation.required' }),
-          url: () => ({ key: 'errors.validation.required' }),
-          unique: () => ({ key: 'errors.validation.repeat' }),
-        },
-      });
-    });
+  });
 
   const { watchedState, renderForm } = watch(elements, i18n, initState);
 
@@ -61,7 +66,12 @@ const app = async () => {
 
     const formData = new FormData(elements.form);
     const data = Object.fromEntries(formData);
-    schema.validate(data, { abortEarly: false })
+
+    // schema.validate(data, { abortEarly: false })
+
+    validateRSS(url = watchedState.form.input, urls = watchedState.form.rssFeedsUrls) => {
+
+    }
       .then(() => {
         console.log('Yup Success Validation');
         watchedState.form.rssFeedsUrls.push((data.url));
