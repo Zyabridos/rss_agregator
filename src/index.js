@@ -2,42 +2,65 @@ import './styles.scss';
 import 'bootstrap';
 import * as yup from 'yup';
 import i18next from 'i18next';
+import axios from 'axios';
 import watch from './view.js';
 import resources from './locales/index.js';
+import parser from './parser.js';
 
 export const initState = {
   form: {
-    errors: [erros.validation.key],
+    // error: [],
+    error: '',
     rssFeedsUrls: [],
     currentState: 'filling',
     isValid: false,
   },
   feeds: [],
   posts: [
-    {title: 'aa', description:  "bb"},
-    {title: 'aa', description:  "bb"},
-    {title: 'aa', description:  "bb"},
-    {title: 'aa', description:  "bb"},
-  ]
+    { title: 'aa', description: 'bb' },
+    { title: 'aa', description: 'bb' },
+    { title: 'aa', description: 'bb' },
+    { title: 'aa', description: 'bb' },
+  ],
 };
 
-1. Пользователь ввел url
-2. Валидация урла
-3. Валидный url - отсылаем  запрос axios 
-4. response.data (от axios)
-5, Распарсили данные
-5& В этом документе ао селекторам получаем данные
-
-const schema = yup.string().trim().url('It is not a valid URL').required('errors.validation.required');
-// .test('unique', 'RSS needs te be unique', (url) => new Set(url).size === url.length);
-const validateESS = (url, urls) => {
-  scema = yup.string().trim().url('It is not a valid URL').required('errors.validation.required')
-    .notOne(urls);
-
-  schema.validate()
-    .then(validate, add to URLS)
-    .catch();
+const testFeed = 'https://lorem-rss.hexlet.app/feed';
+const testURL = new URL(testFeed);
+const getData = (url) => {
+  axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`))
+    .then((response) => {
+      const data = parser(response.data.contents);
+    })
+    .catch((err) => console.error(err));
 };
+
+getData(testURL);
+// 1. Пользователь ввел url
+// 2. Валидация урла
+// 3. Валидный url - отсылаем  запрос axios
+// 4. response.data (от axios)
+// 5, Распарсили данные
+// 5& В этом документе ао селекторам получаем данные
+const schema2 = yup
+  .string()
+  .trim()
+  .url('errors.validation.invalidURL')
+  .required('errors.validation.required');
+// .notOneOf(urls, 'errors.validation.repeat');
+// const validateRSS = (url, urls) => {
+const validateRSS = (url) => {
+  const schema = yup
+    .string()
+    .trim()
+    .url('errors.validation.invalidURL')
+    .required('errors.validation.required');
+    // .notOneOf(urls, 'errors.validation.repeat');
+  return schema.validate(url)
+    .then(() => console.log('YUP succsessfull validation'))
+    // .catch((err) => console.error(`An error has occurred: ${err.message}`));
+    .catch((err) => err);
+};
+
 const app = async () => {
   const elements = {
     form: document.querySelector('.rss-form.text-body'),
@@ -46,7 +69,6 @@ const app = async () => {
     feedback: document.querySelector('.feedback.m-0'),
     submitButton: document.querySelector('.h-100.btn.btn-lg.btn-primary'),
   };
-// валидный RSS
   const defaultLang = 'ru';
 
   const i18n = i18next.createInstance();
@@ -66,27 +88,27 @@ const app = async () => {
 
     const formData = new FormData(elements.form);
     const data = Object.fromEntries(formData);
-
-    // schema.validate(data, { abortEarly: false })
-
-    validateRSS(url = watchedState.form.input, urls = watchedState.form.rssFeedsUrls) => {
-
-    }
+    // const urls = watchedState.form.rssFeedsUrls;
+    // schema2.validate(data.url)
+    //   .then(() => {
+    //     watchedState.form.isValid = true;
+    //     watchedState.form.rssFeedsUrls.push((data.url));
+    //     watchedState.form.currentState = 'sent';
+    //   })
+    //   .catch((err) => {
+    //     watchedState.form.isValid = false;
+    //     watchedState.form.error = err.message;
+    //   });
+    validateRSS(data.url)
       .then(() => {
-        console.log('Yup Success Validation');
-        watchedState.form.rssFeedsUrls.push((data.url));
         watchedState.form.isValid = true;
+        watchedState.form.rssFeedsUrls.push((data.url));
+        watchedState.form.currentState = 'sent';
       })
-      .catch((yupError) => {
-        const validationErrors = yupError.errors;
-        watchedState.form.errors.push(validationErrors);
+      .catch((err) => {
         watchedState.form.isValid = false;
-        // console.log(watchedState.form.errors);
-      })
-
-      .catch((err) => console.error(`An error has occurred: ${err.message}`));
-    console.log(watchedState.form.errors[0]);
+        watchedState.form.error = err.errors;
+      });
   });
 };
-
 app();

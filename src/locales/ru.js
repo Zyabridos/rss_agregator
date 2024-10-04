@@ -14,10 +14,6 @@ export default {
         repeat: 'RSS уже существует',
       },
     },
-    success: {
-      validation: {
-        sucsessRSSValidation: 'RSS успешно загружен',
-      },
-    },
+    success: 'RSS успешно загружен',
   },
 };

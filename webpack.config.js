@@ -2,6 +2,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 export default {
   mode: process.env.NODE_ENV || 'development',
+  // отображение кода в DevTools в первозданном виде
   devtool: 'eval-source-map',
   module: {
     rules: [

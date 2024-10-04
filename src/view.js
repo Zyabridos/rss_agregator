@@ -25,16 +25,13 @@ const caseSending = () => {
   elements.submitButton.disabled = true;
 };
 
-const caseInvalidRSS = () => {
+const caseError = () => {
   // тут еще нажо будет добавить второй вариант валидации - requiered(всплывает модалка "Please fill in this field")
   // elements.submitButton.disabled = true;
   elements.feedback.classList.add('text-danger');
   elements.feedback.classList.remove('text-success');
-  elements.feedback.textContent = 'Ссылка должна быть валидным URL';
+  elements.feedback.textContent = 'errors.validation.invalidRSS';
   elements.inputLabel.innerText = 'the url name should stay, ubtil state isValid';
-};
-
-const caseAlreadyExistsRSS = () => {
   elements.submitButton.disabled = true;
   elements.feedback.textContent = 'RSS уже существует';
   elements.inputLabel.innerText = 'the url name should stay, ubtil state isValid';
@@ -50,27 +47,27 @@ const watch = (elements, i18n, state) => {
   const { t } = i18n;
 
   const watchedState = onChange(state, (path, value) => {
-    console.log(`path:${path}`);
+    // console.log(`path:${path}`);
     switch (path) {
       case 'form.isValid':
         caseSent();
         break;
       case ('form.error'):
-        caseInvalidRSS();
+        caseError();
         break;
       case ('feed'):
-        renderFeed();
-      default:
-        // throw new Error('unknown form status');
+        // renderFeed();
         break;
+      default:
+        throw new Error('unknown form status');
     }
   });
 
-  renderPosts = () => {
+  const renderPosts = () => {
 
   };
 
-  renderFeeg = () => {
+  const renderFeed = () => {
 
   };
 
