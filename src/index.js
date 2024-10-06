@@ -2,8 +2,9 @@ import './styles.scss';
 import 'bootstrap';
 import * as yup from 'yup';
 import i18next from 'i18next';
+import { uniqueId } from 'lodash';
 import axios from 'axios';
-import watch from './view.js';
+import watch, { renderFeed, renderPosts } from './view.js';
 import resources from './locales/index.js';
 import parser from './parser.js';
 
@@ -16,25 +17,14 @@ export const initState = {
     isValid: false,
   },
   feeds: [],
-  posts: [
-    { title: 'aa', description: 'bb' },
-    { title: 'aa', description: 'bb' },
-    { title: 'aa', description: 'bb' },
-    { title: 'aa', description: 'bb' },
-  ],
+  posts: [],
 };
 
 const testFeed = 'https://lorem-rss.hexlet.app/feed';
 const testURL = new URL(testFeed);
-const getData = (url) => {
-  axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`))
-    .then((response) => {
-      const data = parser(response.data.contents);
-    })
-    .catch((err) => console.error(err));
-};
 
-getData(testURL);
+// getData(testURL);
+
 // 1. Пользователь ввел url
 // 2. Валидация урла
 // 3. Валидный url - отсылаем  запрос axios
@@ -46,7 +36,6 @@ const validateRSS = (url, urls) => {
   const schema = yup
     .string()
     .trim()
-    // .url('errors.validation.invalidURL')
     .url('errors.validation.invalidURL')
     .required('errors.validation.required')
     .notOneOf(urls, 'errors.validation.repeat');
@@ -61,6 +50,7 @@ const app = async () => {
     feedback: document.querySelector('.feedback.m-0'),
     submitButton: document.querySelector('.h-100.btn.btn-lg.btn-primary'),
   };
+
   const defaultLang = 'ru';
 
   const i18n = i18next.createInstance();
@@ -71,6 +61,21 @@ const app = async () => {
   })
     .then(() => {
       const { watchedState, renderForm } = watch(elements, i18n, initState);
+
+      const getData = (url) => {
+        axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`))
+          .then((response) => {
+            const { feed, posts } = parser(response.data.contents);
+            watchedState.feeds.unshift(feed);
+            watchedState.posts.unshift(posts);
+            // вот так вот лучше, наверное, не стоит делать - надо будет переделать это после validate
+            renderFeed(feed.title, feed.description);
+            posts.map((post) => {
+              renderPosts(post.title, post.description, post.url);
+            });
+          })
+          .catch((err) => console.error(err));
+      };
 
       renderForm();
 
@@ -84,6 +89,11 @@ const app = async () => {
             watchedState.isValid = true;
             watchedState.form.rssFeedsUrls.push(data.url);
             watchedState.form.currentState = 'sent';
+            // renderFeed(feeds.title, feeds.description);
+            renderPosts();
+          })
+          .then(() => {
+            getData(data.url);
           })
           .catch((err) => {
             watchedState.form.isValid = false;
