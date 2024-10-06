@@ -41,24 +41,16 @@ getData(testURL);
 // 4. response.data (от axios)
 // 5, Распарсили данные
 // 5& В этом документе ао селекторам получаем данные
-const schema2 = yup
-  .string()
-  .trim()
-  .url('errors.validation.invalidURL')
-  .required('errors.validation.required');
-// .notOneOf(urls, 'errors.validation.repeat');
-// const validateRSS = (url, urls) => {
-const validateRSS = (url) => {
+
+const validateRSS = (url, urls) => {
   const schema = yup
     .string()
     .trim()
+    // .url('errors.validation.invalidURL')
     .url('errors.validation.invalidURL')
-    .required('errors.validation.required');
-    // .notOneOf(urls, 'errors.validation.repeat');
-  return schema.validate(url)
-    .then(() => console.log('YUP succsessfull validation'))
-    // .catch((err) => console.error(`An error has occurred: ${err.message}`));
-    .catch((err) => err);
+    .required('errors.validation.required')
+    .notOneOf(urls, 'errors.validation.repeat');
+  return schema.validate(url);
 };
 
 const app = async () => {
@@ -72,43 +64,33 @@ const app = async () => {
   const defaultLang = 'ru';
 
   const i18n = i18next.createInstance();
-
   i18next.init({
     lng: defaultLang,
     debug: true,
     resources,
-  });
+  })
+    .then(() => {
+      const { watchedState, renderForm } = watch(elements, i18n, initState);
 
-  const { watchedState, renderForm } = watch(elements, i18n, initState);
+      renderForm();
 
-  renderForm();
+      elements.form.addEventListener('submit', (e) => {
+        e.preventDefault();
 
-  elements.form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(elements.form);
-    const data = Object.fromEntries(formData);
-    // const urls = watchedState.form.rssFeedsUrls;
-    // schema2.validate(data.url)
-    //   .then(() => {
-    //     watchedState.form.isValid = true;
-    //     watchedState.form.rssFeedsUrls.push((data.url));
-    //     watchedState.form.currentState = 'sent';
-    //   })
-    //   .catch((err) => {
-    //     watchedState.form.isValid = false;
-    //     watchedState.form.error = err.message;
-    //   });
-    validateRSS(data.url)
-      .then(() => {
-        watchedState.form.isValid = true;
-        watchedState.form.rssFeedsUrls.push((data.url));
-        watchedState.form.currentState = 'sent';
-      })
-      .catch((err) => {
-        watchedState.form.isValid = false;
-        watchedState.form.error = err.errors;
+        const formData = new FormData(elements.form);
+        const data = Object.fromEntries(formData);
+        validateRSS(data.url, watchedState.form.rssFeedsUrls)
+          .then(() => {
+            watchedState.isValid = true;
+            watchedState.form.rssFeedsUrls.push(data.url);
+            watchedState.form.currentState = 'sent';
+          })
+          .catch((err) => {
+            watchedState.form.isValid = false;
+            watchedState.form.error = err.message;
+            alert(watchedState.form.error);
+          });
       });
-  });
+    });
 };
 app();

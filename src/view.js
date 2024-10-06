@@ -59,7 +59,7 @@ const watch = (elements, i18n, state) => {
         // renderFeed();
         break;
       default:
-        throw new Error('unknown form status');
+        // throw new Error('unknown form status');
     }
   });
 
