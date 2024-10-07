@@ -7,7 +7,6 @@ import resources from './locales/index.js';
 
 const initState = {
   form: {
-    // error: [],
     error: '',
     rssFeedsUrls: [],
     currentState: 'filling',
@@ -15,7 +14,12 @@ const initState = {
   },
   feeds: [],
   posts: [],
+  ui: {
+    viewedPostsIDs: [],
+  },
 };
+
+// если пройтися по всем по всем постам, и если модальное окно было нажато, то
 
 // надо будет или таймаут поменять на минуту,
 // Или на что-то другое - проверь, передается ли где интервал апдейта с rss,
@@ -30,6 +34,8 @@ const app = async () => {
     feedback: document.querySelector('.feedback.m-0'),
     submitButton: document.querySelector('.h-100.btn.btn-lg.btn-primary'),
     modalButton: document.querySelector('.btn.btn-outline-primary'),
+    modalButtonContainer: document.querySelector('.col-md-10.posts'),
+    href: document.querySelector('.fw-bold'),
   };
 
   const defaultLang = 'ru';
@@ -48,20 +54,28 @@ const app = async () => {
 
         const formData = new FormData(elements.form);
         const data = Object.fromEntries(formData);
-        validateRSS(data.url, watchedState.form.rssFeedsUrls)
+        const currentURL = (data.url).trim();
+        validateRSS(currentURL, watchedState.form.rssFeedsUrls)
           .then(() => {
             watchedState.isValid = true;
-            watchedState.form.rssFeedsUrls.push(data.url);
+            watchedState.form.currentState = 'sending';
+            watchedState.form.rssFeedsUrls.push(currentURL);
             watchedState.form.currentState = 'sent';
           })
           .then(() => {
-            getDataAndUpdateRSS(watchedState, data.url, TIMEOUTINTERVAL);
+            getDataAndUpdateRSS(watchedState, currentURL, TIMEOUTINTERVAL);
           })
           .catch((err) => {
             watchedState.form.isValid = false;
             watchedState.form.error = err.message;
             alert(watchedState.form.error);
           });
+      });
+      elements.modalButtonContainer.addEventListener('click', (e) => {
+        console.log(e);
+        // ну это работает только если на ссылку нажимать, надо еще и по elements.modalButton
+        e.target.classList.remove('fw-bold');
+        e.target.classList.add('fw-normal', 'link-secondary');
       });
     });
 };

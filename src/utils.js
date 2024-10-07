@@ -22,8 +22,9 @@ export const getDataAndUpdateRSS = (state, url) => {
       state.posts.unshift(posts);
       renderFeed(feed.title, feed.description);
       posts.map((post) => {
-        renderPosts(post.title, post.description, post.url);
+        renderPosts(post.id, post.title, post.description, post.url);
         renderModalWindowDescription(post.title, post.description, post.url);
+        state.ui.viewedPostsIDs.unshift(post.id);
       });
     });
   // .catch((err) => console.error(err));

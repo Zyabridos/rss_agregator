@@ -78,10 +78,10 @@ export const renderFeed = (title, description) => {
   feedsContainer.appendChild(cardDiv1);
 };
 
-export const renderViewPostButton = (t) => {
+export const renderViewPostButton = (id, t) => {
   const viewButton = document.createElement('button');
   setAttributes(viewButton, {
-    type: 'button', 'data-id': '35', 'data-bs-toggle': 'modal', 'data-bs-target': '#modal',
+    type: 'button', 'data-id': id, 'data-bs-toggle': 'modal', 'data-bs-target': '#modal',
   });
   viewButton.classList.add('btn', 'btn-outline-primary', 'btn-sm');
   viewButton.innerText = 'Просмотр';
@@ -89,9 +89,10 @@ export const renderViewPostButton = (t) => {
   return viewButton;
 };
 
-const renderHref = (title, description, url) => {
+const renderHref = (id, title, description, url) => {
   const href = document.createElement('a');
-  setAttributes(href, { href: url, 'data-id': '35' });
+  // setAttributes(href, { href: url, 'data-id': '35' });
+  setAttributes(href, { href: url, 'data-id': id });
   href.setAttribute('tagret', '_blank');
   href.setAttribute('rel', 'noopener noreferrer');
   href.classList.add('fw-bold');
@@ -99,7 +100,7 @@ const renderHref = (title, description, url) => {
   return href;
 };
 
-export const renderPosts = (title, description, url, t) => {
+export const renderPosts = (id, title, description, url, t) => {
   const postsContainer = document.querySelector('.mx-auto.posts');
   const cardDiv2 = document.createElement('div');
   cardDiv2.classList.add('card', 'border-0');
@@ -114,8 +115,8 @@ export const renderPosts = (title, description, url, t) => {
 
   const li = document.createElement('li');
   li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
-  const viewButton = renderViewPostButton(t);
-  const href = renderHref(title, description, url);
+  const viewButton = renderViewPostButton(id, t);
+  const href = renderHref(id, title, description, url);
   document.querySelector('.mx-auto.posts').appendChild(cardDiv2);
 
   cardDiv2.appendChild(h2DivContainer);
