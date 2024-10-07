@@ -16,11 +16,13 @@ const elements = {
   submitButton: document.querySelector('.h-100.btn.btn-lg.btn-primary'),
 };
 
-const caseSent = () => {
+// const caseSent = (elements, i18n, t) => {
+const caseSent = (i18n, t) => {
   console.log('sent');
   elements.input.focus();
   elements.submitButton.disabled = false;
   elements.feedback.textContent = 'RSS успешно добавлен';
+  // elements.feedback.textContent = t('success');
   elements.input.value = '';
   elements.feedback.classList.remove('text-danger');
   elements.feedback.classList.add('text-success');
@@ -31,16 +33,19 @@ const caseSending = () => {
   elements.submitButton.disabled = true;
 };
 
-const caseError = () => {
+const caseFilling = () => {
+  console.log('filling');
+  elements.submitButton.disable = false;
+  elements.input.focus();
+};
+
+const caseError = (error, t) => {
   // тут еще нажо будет добавить второй вариант валидации - requiered(всплывает модалка "Please fill in this field")
-  // elements.submitButton.disabled = true;
   elements.feedback.classList.add('text-danger');
   elements.feedback.classList.remove('text-success');
   elements.feedback.textContent = 'errors.validation.invalidRSS';
-  elements.inputLabel.innerText = 'the url name should stay, ubtil state isValid';
-  elements.submitButton.disabled = true;
-  elements.feedback.textContent = 'RSS уже существует';
-  elements.inputLabel.innerText = 'the url name should stay, ubtil state isValid';
+  // elements.feedback.textContent = 'errors.validation.repeat';
+  // elements.feedback.textContent = 'errors.validation.invalidURL';
 };
 
 export const renderFeed = (title, description) => {
@@ -73,13 +78,14 @@ export const renderFeed = (title, description) => {
   feedsContainer.appendChild(cardDiv1);
 };
 
-export const renderViewButton = () => {
+export const renderViewPostButton = (t) => {
   const viewButton = document.createElement('button');
   setAttributes(viewButton, {
     type: 'button', 'data-id': '35', 'data-bs-toggle': 'modal', 'data-bs-target': '#modal',
   });
   viewButton.classList.add('btn', 'btn-outline-primary', 'btn-sm');
   viewButton.innerText = 'Просмотр';
+  // viewButton.innerText = t('viewPostButton');
   return viewButton;
 };
 
@@ -93,7 +99,7 @@ const renderHref = (title, description, url) => {
   return href;
 };
 
-export const renderPosts = (title, description, url) => {
+export const renderPosts = (title, description, url, t) => {
   const postsContainer = document.querySelector('.mx-auto.posts');
   const cardDiv2 = document.createElement('div');
   cardDiv2.classList.add('card', 'border-0');
@@ -108,12 +114,9 @@ export const renderPosts = (title, description, url) => {
 
   const li = document.createElement('li');
   li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
-  const viewButton = renderViewButton();
+  const viewButton = renderViewPostButton(t);
   const href = renderHref(title, description, url);
-
-  const temp = document.querySelector('.mx-auto.posts');
-  temp.appendChild(cardDiv2);
-  console.log(temp);
+  document.querySelector('.mx-auto.posts').appendChild(cardDiv2);
 
   cardDiv2.appendChild(h2DivContainer);
   cardDiv2.appendChild(ul);
@@ -125,10 +128,11 @@ export const renderPosts = (title, description, url) => {
   postsContainer.appendChild(cardDiv2);
 };
 
-const caseFilling = () => {
-  console.log('filling');
-  elements.submitButton.disable = false;
-  elements.input.focus();
+export const renderModalWindowDescription = (title, description, url) => {
+  const modalTitle = document.querySelector('.modal-title');
+  modalTitle.textContent = title;
+  const modalBody = document.querySelector('.modal-body');
+  modalBody.textContent = description;
 };
 
 const watch = (elements, i18n, state) => {
@@ -137,11 +141,11 @@ const watch = (elements, i18n, state) => {
   const watchedState = onChange(state, (path, value) => {
     // console.log(`path:${path}`);
     switch (path) {
-      case 'form.isValid':
+      case 'isValid':
         caseSent();
         break;
       case ('form.error'):
-        caseError();
+        // caseError(error, t);
         break;
       case ('feed'):
         // renderFeed();
@@ -152,15 +156,16 @@ const watch = (elements, i18n, state) => {
   });
 
   const renderForm = () => {
+    // const { t } = i18next;
     // i18next.init({
     //   resourses,
     // })
     //   .then(() => {
-    //     const { t } = i18next;
-    //     const title = document.createElement('h2');
-    //     title.classList.add('text-white');
-    //     title.textContent = t('title');
-    //     elements.form.append(title);
+    // const { t } = i18next;
+    // const title = document.createElement('h2');
+    // title.classList.add('text-white');
+    // title.textContent = t('title');
+    // elements.form.append(title);
     //   });
   };
   return {

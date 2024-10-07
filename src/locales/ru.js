@@ -6,7 +6,7 @@ export default {
     title: 'RSS агрегатор',
     subtitle: 'Начните читать RSS сегодня! Это легко, это красиво.',
     inputField: 'Ссылка RSS',
-    submit: 'Добавить',
+    viewPostButton: 'Просмотр',
     errors: {
       validation: {
         required: 'Не должно быть пустым',
