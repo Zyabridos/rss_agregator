@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import axios from 'axios';
+import { uniqueId } from 'lodash';
 import parser from './parser.js';
 import { renderFeed, renderPosts, renderModalWindowDescription } from './view.js';
 
@@ -14,11 +15,23 @@ export const validateRSS = (url, urls) => {
 };
 
 // url можно и из стейта достать - переделать потом
-// установить таймаут, а само отлавливание постов в другую функцию
-export const getDataAndUpdateRSS = (state, url) => {
+export const generateFeedsAndPosts = (state, url) => {
   axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`))
     .then((response) => {
-      const { feed, posts } = parser(response.data.contents);
+      const content = parser(response.data.contents);
+      console.log(content);
+      const feed = {
+        title: content.querySelector('title').textContent,
+        // description: content.querySelector('.description').textContent,
+        description: 'cannot read properties of null (reading textContent)',
+      };
+      const posts = Array.from(content.querySelectorAll('item'))
+        .map((post) => ({
+          title: post.querySelector('title').textContent,
+          description: post.querySelector('description').textContent,
+          url: post.querySelector('link').textContent,
+          id: uniqueId(),
+        }));
       state.feeds.unshift(feed);
       state.posts.unshift(posts);
       renderFeed(feed.title, feed.description);
@@ -29,4 +42,11 @@ export const getDataAndUpdateRSS = (state, url) => {
       });
     });
   // .catch((err) => console.error(err));
+};
+
+// установить таймаут, а само отлавливание постов в другую функцию
+export const updateRSS = (state, url) => {
+  setTimeout(() => {
+    generateFeedsAndPosts(state, url);
+  }, 500);
 };

@@ -1,7 +1,9 @@
 import './styles.scss';
 import 'bootstrap';
 import i18next from 'i18next';
-import { validateRSS, getDataAndUpdateRSS } from './utils.js';
+import {
+  validateRSS, updateRSS,
+} from './utils.js';
 import watch from './view.js';
 import resources from './locales/index.js';
 
@@ -61,16 +63,16 @@ const app = async () => {
             watchedState.form.currentState = 'sent';
           })
           .then(() => {
-            getDataAndUpdateRSS(watchedState, currentURL, TIMEOUTINTERVAL);
+            updateRSS(watchedState, currentURL);
           })
           .catch((err) => {
             watchedState.form.isValid = false;
             watchedState.form.error = err.message;
             alert(watchedState.form.error);
           });
+        // generateFeedsAndPosts(watchedState, currentURL);
       });
       elements.modalButtonContainer.addEventListener('click', (e) => {
-        console.log(e);
         // ну это работает только если на ссылку нажимать, надо еще и по elements.modalButton
         e.target.classList.remove('fw-bold');
         e.target.classList.add('fw-normal', 'link-secondary');
