@@ -7,6 +7,8 @@ export default (data, mimeType) => {
   if (errorNode) {
     console.error(errorNode);
   } else {
+    // вот это надо в отдельную функцию - вообще не парсерское это дела
+    // return content - вот функция парсера
     const feed = {
       title: content.querySelector('title').textContent,
       // description: content.querySelector('.description').textContent,

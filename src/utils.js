@@ -14,6 +14,7 @@ export const validateRSS = (url, urls) => {
 };
 
 // url можно и из стейта достать - переделать потом
+// установить таймаут, а само отлавливание постов в другую функцию
 export const getDataAndUpdateRSS = (state, url) => {
   axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`))
     .then((response) => {

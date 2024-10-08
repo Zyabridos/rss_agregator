@@ -85,13 +85,11 @@ export const renderViewPostButton = (id, t) => {
   });
   viewButton.classList.add('btn', 'btn-outline-primary', 'btn-sm');
   viewButton.innerText = 'Просмотр';
-  // viewButton.innerText = t('viewPostButton');
   return viewButton;
 };
 
 const renderHref = (id, title, description, url) => {
   const href = document.createElement('a');
-  // setAttributes(href, { href: url, 'data-id': '35' });
   setAttributes(href, { href: url, 'data-id': id });
   href.setAttribute('tagret', '_blank');
   href.setAttribute('rel', 'noopener noreferrer');
