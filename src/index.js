@@ -83,18 +83,16 @@ const app = async () => {
         if ('networkError') {
           watchedState.form = { error: 'networkError', isValid: false, currentState: 'error' };
         } else throw error;
+      })
+      .catch((err) => {
+        watchedState.form.isValid = false;
+        watchedState.form.error = err.message;
       });
-    // .catch((err) => {
-    //   watchedState.form.isValid = false;
-    //   watchedState.form.error = err.message;
-    // });
-    // generateFeedsAndPosts(watchedState, currentURL);
   });
   formElements.modalButtonContainer.addEventListener('click', (e) => {
     // ну это работает только если на ссылку нажимать, надо еще и по elements.modalButton
     e.target.classList.remove('fw-bold');
     e.target.classList.add('fw-normal', 'link-secondary');
   });
-  // });
 };
 app();

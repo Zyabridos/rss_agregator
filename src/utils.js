@@ -38,29 +38,15 @@ export const generateFeedsAndPosts = (state, url) => {
     .catch((err) => 'networkProblems');
 };
 
-export const updateRSS = (state, url) => {
-  setTimeout(() => {
-    generateFeedsAndPosts(state, url);
-  }, 500);
+export const updateRSS = (state, url, timeout = 500) => {
+  generateFeedsAndPosts(state, url)
+    .then(() => {
+      setTimeout(() => {
+        console.log('set Timeout');
+        generateFeedsAndPosts(state, url);
+      }, timeout);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
 };
-
-// const sayHello = () => {
-//   console.log('Hello, world!');
-//   setTimeout(() => {
-//     sayHello();
-//   }, 500);
-// };
-
-// export const updateRSS = (state, url, timeout) => {
-//   updateRSS(state, url);
-//   setTimeout(() => {
-//     updateRSS(state, url);
-//   }, 500);
-// };
-
-// export const updateRSS = (state, url, timeout = 500) => {
-//   updateRSS(state, url);
-//   setTimeout(() => {
-//     generateFeedsAndPosts(state, url);
-//   }, timeout);
-// };

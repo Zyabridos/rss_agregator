@@ -1,4 +1,4 @@
-name: myWorkflow
+name: check-linter-and-installing-of-dels
 on: [push]
 jobs:
   build:
