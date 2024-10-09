@@ -18,6 +18,9 @@ export const generateFeedsAndPosts = (state, url) => {
   axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`))
     .then((response) => {
       const content = parser(response.data.contents);
+      if (!content) {
+        return 'isNotRSS';
+      }
       const feed = {
         title: content.querySelector('title').textContent,
         description: content.querySelector('description').textContent,
@@ -32,7 +35,7 @@ export const generateFeedsAndPosts = (state, url) => {
       state.feeds.unshift(feed);
       state.posts.unshift(posts);
     })
-    .catch((err) => console.error(err));
+    .catch((err) => 'networkProblems');
 };
 
 export const updateRSS = (state, url) => {

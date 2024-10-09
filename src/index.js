@@ -42,6 +42,19 @@ const app = async () => {
   i18n.init(resources);
   const watchedState = watch(formElements, i18n, initState);
 
+  const errorHandler = (errorMessage) => {
+    switch (errorMessage) {
+      case 'isNotRSS':
+        watchedState.form = { state: 'filling', error: errorMessage };
+        break;
+      case 'networkError':
+        watchedState.form = { state: 'filling', error: errorMessage };
+        break;
+      default:
+        throw new Error(`Unknown error has occured${errorMessage}`);
+    }
+  };
+
   formElements.form.addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -55,14 +68,26 @@ const app = async () => {
         watchedState.form.rssFeedsUrls.push(currentURL);
         watchedState.form.currentState = 'sent';
       })
-      .then(() => {
-        // updateRSS(watchedState, currentURL, TIMEOUTINTERVAL);
-        updateRSS(watchedState, currentURL);
-      })
       .catch((err) => {
         watchedState.form.isValid = false;
         watchedState.form.error = err.message;
+      })
+      .then(() => {
+        // updateRSS(watchedState, currentURL, TIMEOUTINTERVAL);
+        updateRSS(watchedState, currentURL);
+        if ('isNotRss') {
+          watchedState.form = { error: 'isNotRSS', isValid: false, currentState: 'filling' };
+        }
+      })
+      .catch((error) => {
+        if ('networkError') {
+          watchedState.form = { error: 'networkError', isValid: false, currentState: 'error' };
+        } else throw error;
       });
+    // .catch((err) => {
+    //   watchedState.form.isValid = false;
+    //   watchedState.form.error = err.message;
+    // });
     // generateFeedsAndPosts(watchedState, currentURL);
   });
   formElements.modalButtonContainer.addEventListener('click', (e) => {

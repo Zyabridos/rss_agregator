@@ -57,7 +57,7 @@ export const renderViewPostButton = (id) => {
   return viewButton;
 };
 
-const renderHref = (id, title, description, url) => {
+const renderHrefPost = (id, title, description, url) => {
   const href = document.createElement('a');
   setAttributes(href, { href: url, 'data-id': id });
   href.setAttribute('tagret', '_blank');
@@ -67,35 +67,37 @@ const renderHref = (id, title, description, url) => {
   return href;
 };
 
-export const renderPosts = (id, title, description, url) => {
+const renderPostsBody = () => {
   const postsContainer = document.querySelector('.mx-auto.posts');
-  const cardDiv2 = document.createElement('div');
-  cardDiv2.classList.add('card', 'border-0');
-  const h2DivContainer = document.createElement('div');
-  h2DivContainer.classList.add('card-body');
+  const divContainer = document.createElement('div');
+  divContainer.classList.add('card', 'border-0');
+
+  const h2Body = document.createElement('div');
+  h2Body.classList.add('card-body');
+
   const h2 = document.createElement('h2');
-  h2.classList.add('card-title', 'h4');
   h2.textContent = 'Посты';
 
   const ul = document.createElement('ul');
   ul.classList.add('list-group', 'border-0', 'rounded-0');
 
+  postsContainer.appendChild(divContainer);
+  divContainer.appendChild(h2Body);
+  h2Body.appendChild(h2);
+
+  divContainer.appendChild(ul);
+};
+
+const renderPost = (id, title, description, url) => {
+  const ul = document.querySelector('.list-group.border-0.rounded-0');
   const li = document.createElement('li');
   li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
   const viewButton = renderViewPostButton(id);
-  const href = renderHref(id, title, description, url);
-  document.querySelector('.mx-auto.posts').appendChild(cardDiv2);
-
-  cardDiv2.appendChild(h2DivContainer);
-  cardDiv2.appendChild(ul);
-  h2DivContainer.appendChild(h2);
-  ul.appendChild(li);
+  const href = renderHrefPost(id, title, description, url);
   li.appendChild(href);
   li.appendChild(viewButton);
-
-  postsContainer.appendChild(cardDiv2);
+  ul.appendChild(li);
 };
-
 const watch = (formElements, i18n, state) => {
   const elements = { ...formElements };
   const watchedState = onChange(state, (path, value) => {
@@ -104,6 +106,7 @@ const watch = (formElements, i18n, state) => {
       caseSent(elements, i18n);
     }
     if (path === 'form.error') {
+      console.log(value);
       elements.feedback.classList.add('text-danger');
       elements.feedback.classList.remove('text-success');
       elements.feedback.textContent = i18n.t(value);
@@ -115,9 +118,11 @@ const watch = (formElements, i18n, state) => {
       });
     }
     if (path === 'posts') {
+      renderPostsBody();
+
       value.forEach((item) => {
         item.forEach((post) => {
-          renderPosts(post.id, post.title, post.description, post.url);
+          renderPost(post.id, post.title, post.description, post.url);
         });
       });
     }

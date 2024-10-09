@@ -11,7 +11,7 @@ export default {
             required: 'Не должно быть пустым',
             invalidURL: 'Ссылка должна быть валидным URL',
             repeat: 'RSS уже существует',
-            notContainingRSS: 'Ресурс не содержит валидный RSS',
+            isNotRSS: 'Ресурс не содержит валидный RSS',
           },
         },
         subtitle: 'Начните читать RSS сегодня! Это легко, это красиво.',
