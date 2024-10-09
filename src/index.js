@@ -2,10 +2,10 @@ import './styles.scss';
 import 'bootstrap';
 import i18next from 'i18next';
 import {
-  validateRSS, updateRSS,
+  validateRSS, updateRSS, generateFeedsAndPosts,
 } from './utils.js';
 import watch from './view.js';
-import resources from './locales/index.js';
+import resources from './locales/ru.js';
 
 const initState = {
   form: {
@@ -24,10 +24,10 @@ const initState = {
 // надо будет или таймаут поменять на минуту,
 // Или на что-то другое - проверь, передается ли где интервал апдейта с rss,
 // или интервал апдейта устанавливаю я
-const TIMEOUTINTERVAL = 2000;
+const TIMEOUTINTERVAL = 1000;
 
 const app = async () => {
-  const elements = {
+  const formElements = {
     form: document.querySelector('.rss-form.text-body'),
     input: document.querySelector('.form-control.w-100'),
     inputLabel: document.querySelector('[for="url-input"]'),
@@ -38,45 +38,38 @@ const app = async () => {
     href: document.querySelector('.fw-bold'),
   };
 
-  const defaultLang = 'ru';
-
   const i18n = i18next.createInstance();
-  i18next.init({
-    lng: defaultLang,
-    debug: true,
-    resources,
-  })
-    .then(() => {
-      const { watchedState, renderForm } = watch(elements, i18n, initState);
+  i18n.init(resources);
+  const watchedState = watch(formElements, i18n, initState);
 
-      elements.form.addEventListener('submit', (e) => {
-        e.preventDefault();
+  formElements.form.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-        const formData = new FormData(elements.form);
-        const data = Object.fromEntries(formData);
-        const currentURL = (data.url).trim();
-        validateRSS(currentURL, watchedState.form.rssFeedsUrls)
-          .then(() => {
-            watchedState.isValid = true;
-            watchedState.form.currentState = 'sending';
-            watchedState.form.rssFeedsUrls.push(currentURL);
-            watchedState.form.currentState = 'sent';
-          })
-          .then(() => {
-            updateRSS(watchedState, currentURL);
-          })
-          .catch((err) => {
-            watchedState.form.isValid = false;
-            watchedState.form.error = err.message;
-            alert(watchedState.form.error);
-          });
-        // generateFeedsAndPosts(watchedState, currentURL);
+    const formData = new FormData(formElements.form);
+    const data = Object.fromEntries(formData);
+    const currentURL = (data.url).trim();
+    validateRSS(currentURL, watchedState.form.rssFeedsUrls)
+      .then(() => {
+        watchedState.isValid = true;
+        watchedState.form.currentState = 'sending';
+        watchedState.form.rssFeedsUrls.push(currentURL);
+        watchedState.form.currentState = 'sent';
+      })
+      .then(() => {
+        // updateRSS(watchedState, currentURL, TIMEOUTINTERVAL);
+        updateRSS(watchedState, currentURL);
+      })
+      .catch((err) => {
+        watchedState.form.isValid = false;
+        watchedState.form.error = err.message;
       });
-      elements.modalButtonContainer.addEventListener('click', (e) => {
-        // ну это работает только если на ссылку нажимать, надо еще и по elements.modalButton
-        e.target.classList.remove('fw-bold');
-        e.target.classList.add('fw-normal', 'link-secondary');
-      });
-    });
+    // generateFeedsAndPosts(watchedState, currentURL);
+  });
+  formElements.modalButtonContainer.addEventListener('click', (e) => {
+    // ну это работает только если на ссылку нажимать, надо еще и по elements.modalButton
+    e.target.classList.remove('fw-bold');
+    e.target.classList.add('fw-normal', 'link-secondary');
+  });
+  // });
 };
 app();

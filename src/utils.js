@@ -2,7 +2,6 @@ import * as yup from 'yup';
 import axios from 'axios';
 import { uniqueId } from 'lodash';
 import parser from './parser.js';
-import { renderFeed, renderPosts, renderModalWindowDescription } from './view.js';
 
 export const validateRSS = (url, urls) => {
   const schema = yup
@@ -19,11 +18,9 @@ export const generateFeedsAndPosts = (state, url) => {
   axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`))
     .then((response) => {
       const content = parser(response.data.contents);
-      console.log(content);
       const feed = {
         title: content.querySelector('title').textContent,
-        // description: content.querySelector('.description').textContent,
-        description: 'cannot read properties of null (reading textContent)',
+        description: content.querySelector('description').textContent,
       };
       const posts = Array.from(content.querySelectorAll('item'))
         .map((post) => ({
@@ -34,19 +31,33 @@ export const generateFeedsAndPosts = (state, url) => {
         }));
       state.feeds.unshift(feed);
       state.posts.unshift(posts);
-      renderFeed(feed.title, feed.description);
-      posts.map((post) => {
-        renderPosts(post.id, post.title, post.description, post.url);
-        renderModalWindowDescription(post.title, post.description, post.url);
-        state.ui.viewedPostsIDs.unshift(post.id);
-      });
-    });
-  // .catch((err) => console.error(err));
+    })
+    .catch((err) => console.error(err));
 };
 
-// установить таймаут, а само отлавливание постов в другую функцию
 export const updateRSS = (state, url) => {
   setTimeout(() => {
     generateFeedsAndPosts(state, url);
   }, 500);
 };
+
+// const sayHello = () => {
+//   console.log('Hello, world!');
+//   setTimeout(() => {
+//     sayHello();
+//   }, 500);
+// };
+
+// export const updateRSS = (state, url, timeout) => {
+//   updateRSS(state, url);
+//   setTimeout(() => {
+//     updateRSS(state, url);
+//   }, 500);
+// };
+
+// export const updateRSS = (state, url, timeout = 500) => {
+//   updateRSS(state, url);
+//   setTimeout(() => {
+//     generateFeedsAndPosts(state, url);
+//   }, timeout);
+// };

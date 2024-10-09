@@ -1,6 +1,4 @@
 import onChange from 'on-change';
-import i18next from 'i18next';
-import resourses from './locales/index.js';
 
 const setAttributes = (element, attributes) => {
   for (const key in attributes) {
@@ -8,44 +6,15 @@ const setAttributes = (element, attributes) => {
   }
 };
 
-const elements = {
-  form: document.querySelector('.rss-form.text-body'),
-  input: document.querySelector('.form-control.w-100'),
-  inputLabel: document.querySelector('[for="url-input"]'),
-  feedback: document.querySelector('.feedback.m-0'),
-  submitButton: document.querySelector('.h-100.btn.btn-lg.btn-primary'),
-};
-
-// const caseSent = (elements, i18n, t) => {
-const caseSent = (i18n, t) => {
+const caseSent = (formElements, i18n) => {
   console.log('sent');
+  const elements = { ...formElements };
   elements.input.focus();
   elements.submitButton.disabled = false;
-  elements.feedback.textContent = 'RSS успешно добавлен';
-  // elements.feedback.textContent = t('success');
   elements.input.value = '';
+  elements.feedback.textContent = i18n.t('success');
   elements.feedback.classList.remove('text-danger');
   elements.feedback.classList.add('text-success');
-};
-
-const caseSending = () => {
-  console.log('sending');
-  elements.submitButton.disabled = true;
-};
-
-const caseFilling = () => {
-  console.log('filling');
-  elements.submitButton.disable = false;
-  elements.input.focus();
-};
-
-const caseError = (error, t) => {
-  // тут еще нажо будет добавить второй вариант валидации - requiered(всплывает модалка "Please fill in this field")
-  elements.feedback.classList.add('text-danger');
-  elements.feedback.classList.remove('text-success');
-  elements.feedback.textContent = 'errors.validation.invalidRSS';
-  // elements.feedback.textContent = 'errors.validation.repeat';
-  // elements.feedback.textContent = 'errors.validation.invalidURL';
 };
 
 export const renderFeed = (title, description) => {
@@ -78,7 +47,7 @@ export const renderFeed = (title, description) => {
   feedsContainer.appendChild(cardDiv1);
 };
 
-export const renderViewPostButton = (id, t) => {
+export const renderViewPostButton = (id) => {
   const viewButton = document.createElement('button');
   setAttributes(viewButton, {
     type: 'button', 'data-id': id, 'data-bs-toggle': 'modal', 'data-bs-target': '#modal',
@@ -98,7 +67,7 @@ const renderHref = (id, title, description, url) => {
   return href;
 };
 
-export const renderPosts = (id, title, description, url, t) => {
+export const renderPosts = (id, title, description, url) => {
   const postsContainer = document.querySelector('.mx-auto.posts');
   const cardDiv2 = document.createElement('div');
   cardDiv2.classList.add('card', 'border-0');
@@ -113,7 +82,7 @@ export const renderPosts = (id, title, description, url, t) => {
 
   const li = document.createElement('li');
   li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
-  const viewButton = renderViewPostButton(id, t);
+  const viewButton = renderViewPostButton(id);
   const href = renderHref(id, title, description, url);
   document.querySelector('.mx-auto.posts').appendChild(cardDiv2);
 
@@ -127,50 +96,59 @@ export const renderPosts = (id, title, description, url, t) => {
   postsContainer.appendChild(cardDiv2);
 };
 
+const watch = (formElements, i18n, state) => {
+  const elements = { ...formElements };
+  const watchedState = onChange(state, (path, value) => {
+    // console.log(`path is: ${path}`);
+    if (path === 'isValid') {
+      caseSent(elements, i18n);
+    }
+    if (path === 'form.error') {
+      elements.feedback.classList.add('text-danger');
+      elements.feedback.classList.remove('text-success');
+      elements.feedback.textContent = i18n.t(value);
+    }
+    // надо будет на currentState = sending еще сдлеать кейс
+    if (path === 'feeds') {
+      value.forEach((feed) => {
+        renderFeed(feed.title, feed.description);
+      });
+    }
+    if (path === 'posts') {
+      value.forEach((item) => {
+        item.forEach((post) => {
+          renderPosts(post.id, post.title, post.description, post.url);
+        });
+      });
+    }
+  });
+
+  return watchedState;
+};
+const elements = {
+  form: document.querySelector('.rss-form.text-body'),
+  input: document.querySelector('.form-control.w-100'),
+  inputLabel: document.querySelector('[for="url-input"]'),
+  feedback: document.querySelector('.feedback.m-0'),
+  submitButton: document.querySelector('.h-100.btn.btn-lg.btn-primary'),
+};
+
+const caseSending = () => {
+  console.log('sending');
+  elements.submitButton.disabled = true;
+};
+
+const caseFilling = () => {
+  console.log('filling');
+  elements.submitButton.disable = false;
+  elements.input.focus();
+};
+
 export const renderModalWindowDescription = (title, description, url) => {
   const modalTitle = document.querySelector('.modal-title');
   modalTitle.textContent = title;
   const modalBody = document.querySelector('.modal-body');
   modalBody.textContent = description;
-};
-
-const watch = (elements, i18n, state) => {
-  const { t } = i18n;
-
-  const watchedState = onChange(state, (path, value) => {
-    // console.log(`path:${path}`);
-    switch (path) {
-      case 'isValid':
-        caseSent();
-        break;
-      case ('form.error'):
-        // caseError(error, t);
-        break;
-      case ('feed'):
-        // renderFeed();
-        break;
-      default:
-        // throw new Error('unknown form status');
-    }
-  });
-
-  const renderForm = () => {
-    // const { t } = i18next;
-    // i18next.init({
-    //   resourses,
-    // })
-    //   .then(() => {
-    // const { t } = i18next;
-    // const title = document.createElement('h2');
-    // title.classList.add('text-white');
-    // title.textContent = t('title');
-    // elements.form.append(title);
-    //   });
-  };
-  return {
-    renderForm,
-    watchedState,
-  };
 };
 
 export default watch;

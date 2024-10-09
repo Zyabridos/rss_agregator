@@ -3,9 +3,7 @@ export default (data) => {
   const content = parser.parseFromString(data, 'text/xml');
   const errorNode = content.querySelector('parsererror');
   if (errorNode) {
-    console.error(errorNode);
-  } else {
-    return content;
+    console.error(`parser error: ${errorNode}`);
   }
-  throw new Error('Something went wrong during parsing phase');
+  return content;
 };
