@@ -87,6 +87,65 @@ const renderPostsBody = () => {
 
   divContainer.appendChild(ul);
 };
+// не мое
+const createPostButton = (id, t) => {
+  const button = document.createElement('button');
+  button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+  button.setAttribute('type', 'button');
+  button.setAttribute('data-id', id);
+  button.setAttribute('data-bs-toggle', 'modal');
+  button.setAttribute('data-bs-target', '#modal');
+  button.textContent = t('viewPostButton');
+  return button;
+};
+// не мое
+const createPostLink = (url, id, title, feedId) => {
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('data-id', id);
+  link.setAttribute('target', '_blank');
+  link.setAttribute('rel', 'noopener noreferrer');
+  link.setAttribute('id', feedId);
+  link.classList.add('fw-bold');
+  link.textContent = title;
+  return link;
+};
+// не мое
+const createPostElems = (posts, t) => posts.map((post) => {
+  const postCard = document.createElement('li');
+  postCard.classList.add(
+    'list-group-item',
+    'd-flex',
+    'justify-content-between',
+    'align-items-start',
+    'border-0',
+    'border-end-0',
+  );
+  const link = createPostLink(post.link, post.id, post.title, post.feedId);
+  const button = createPostButton(post.id, t);
+  postCard.append(link, button);
+
+  return postCard;
+});
+const createPostList = (postElems, t) => {
+  const postHolder = document.createElement('div');
+  postHolder.classList.add('card', 'border-0');
+
+  const postTitleBox = document.createElement('div');
+  postTitleBox.classList.add('card-body');
+
+  const postTitle = document.createElement('h2');
+  postTitle.classList.add('card-title', 'h4');
+  postTitle.textContent = t('postsTitle');
+  postTitleBox.append(postTitle);
+
+  const postUl = document.createElement('ul');
+  postUl.classList.add('list-group', 'border-0', 'rounded-0');
+
+  postUl.append(...postElems);
+  postHolder.append(postTitleBox, postUl);
+  return postHolder;
+};
 
 const renderPost = (id, title, description, url) => {
   const ul = document.querySelector('.list-group.border-0.rounded-0');

@@ -42,19 +42,6 @@ const app = async () => {
   i18n.init(resources);
   const watchedState = watch(formElements, i18n, initState);
 
-  const errorHandler = (errorMessage) => {
-    switch (errorMessage) {
-      case 'isNotRSS':
-        watchedState.form = { state: 'filling', error: errorMessage };
-        break;
-      case 'networkError':
-        watchedState.form = { state: 'filling', error: errorMessage };
-        break;
-      default:
-        throw new Error(`Unknown error has occured${errorMessage}`);
-    }
-  };
-
   formElements.form.addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -73,11 +60,12 @@ const app = async () => {
         watchedState.form.error = err.message;
       })
       .then(() => {
+        generateFeedsAndPosts(watchedState, currentURL);
         // updateRSS(watchedState, currentURL, TIMEOUTINTERVAL);
         updateRSS(watchedState, currentURL);
-        if ('isNotRss') {
-          watchedState.form = { error: 'isNotRSS', isValid: false, currentState: 'filling' };
-        }
+        // if ('isNotRss') {
+        //   watchedState.form = { error: 'isNotRSS', isValid: false, currentState: 'filling' };
+        // }
       })
       .catch((error) => {
         if ('networkError') {

@@ -13,6 +13,21 @@ export const validateRSS = (url, urls) => {
   return schema.validate(url);
 };
 
+const getPostsData = (content) => Array.from(content.querySelectorAll('item'))
+  .map((post) => ({
+    title: post.querySelector('title').textContent,
+    description: post.querySelector('description').textContent,
+    url: post.querySelector('link').textContent,
+    id: uniqueId(),
+    feedId: 1,
+  }));
+
+const getFeedData = (content, url = '') => ({
+  title: content.querySelector('title').textContent,
+  description: content.querySelector('description').textContent,
+  id: uniqueId(),
+  url,
+});
 // url можно и из стейта достать - переделать потом
 export const generateFeedsAndPosts = (state, url) => {
   axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`))
@@ -21,32 +36,33 @@ export const generateFeedsAndPosts = (state, url) => {
       if (!content) {
         return 'isNotRSS';
       }
-      const feed = {
-        title: content.querySelector('title').textContent,
-        description: content.querySelector('description').textContent,
-      };
-      const posts = Array.from(content.querySelectorAll('item'))
-        .map((post) => ({
-          title: post.querySelector('title').textContent,
-          description: post.querySelector('description').textContent,
-          url: post.querySelector('link').textContent,
-          id: uniqueId(),
-        }));
-      state.feeds.unshift(feed);
-      state.posts.unshift(posts);
+      const feed = getFeedData(content, url);
+      const posts = getPostsData(content);
+      // это, вроде, нам и не нужно
+      posts.feedId = feed.id;
+      state.feeds = [feed, ...state.feeds];
+      state.posts = [posts, ...state.posts];
     })
     .catch((err) => 'networkProblems');
 };
 
 export const updateRSS = (state, url, timeout = 500) => {
-  generateFeedsAndPosts(state, url)
-    .then(() => {
-      setTimeout(() => {
-        console.log('set Timeout');
-        generateFeedsAndPosts(state, url);
-      }, timeout);
+  const promises = state.feeds.map((feed) => axios
+    .get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(feed.url)}`))
+    .then((response) => {
+      // console.log(feed);
+      const content = parser(response.data.contents);
+      const postsData = getPostsData(content);
+      const feedId = feed.id;
+
+      // нужно, чтобы у поста было ид фида. Или рекурсивоно можно запустить функцию авше?
+      const existingPostTitles = new Set(state.posts);
+      console.log(typeof (existingPostTitles));
     })
-    .catch((err) => {
-      console.error(err);
+    .catch(() => {}));
+
+  Promise.all(promises)
+    .finally(() => {
+      setTimeout(() => updateRSS(state), 2000);
     });
 };
