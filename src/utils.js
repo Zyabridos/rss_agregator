@@ -28,9 +28,10 @@ const getFeedData = (content, url = '') => ({
   id: uniqueId(),
   url,
 });
-// url можно и из стейта достать - переделать потом
+
 export const generateFeedsAndPosts = (state, url) => {
-  axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`))
+  const watchedState = state;
+  return axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`))
     .then((response) => {
       const content = parser(response.data.contents);
       if (!content) {
@@ -38,31 +39,26 @@ export const generateFeedsAndPosts = (state, url) => {
       }
       const feed = getFeedData(content, url);
       const posts = getPostsData(content);
-      // это, вроде, нам и не нужно
       posts.feedId = feed.id;
-      state.feeds = [feed, ...state.feeds];
-      state.posts = [posts, ...state.posts];
+      watchedState.feeds = [feed, ...watchedState.feeds];
+      watchedState.posts = [posts, ...watchedState.posts];
     })
-    .catch((err) => 'networkProblems');
+    .catch(() => 'network error');
 };
 
 export const updateRSS = (state, url, timeout = 500) => {
   const promises = state.feeds.map((feed) => axios
     .get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(feed.url)}`))
     .then((response) => {
-      // console.log(feed);
       const content = parser(response.data.contents);
       const postsData = getPostsData(content);
       const feedId = feed.id;
-
-      // нужно, чтобы у поста было ид фида. Или рекурсивоно можно запустить функцию авше?
-      const existingPostTitles = new Set(state.posts);
-      console.log(typeof (existingPostTitles));
     })
-    .catch(() => {}));
-
+    .catch((error) => {
+      console.log(error);
+    }));
   Promise.all(promises)
-    .finally(() => {
-      setTimeout(() => updateRSS(state), 2000);
+    .then(() => {
+      setTimeout(() => updateRSS(state), timeout);
     });
 };

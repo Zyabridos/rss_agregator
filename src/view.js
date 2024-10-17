@@ -17,6 +17,19 @@ const caseSent = (formElements, i18n) => {
   elements.feedback.classList.add('text-success');
 };
 
+const caseSending = (formElements) => {
+  const elements = { ...formElements };
+  console.log('sending');
+  elements.submitButton.disabled = true;
+};
+
+const caseFilling = (formElements) => {
+  const elements = { ...formElements };
+  console.log('filling');
+  elements.submitButton.disable = false;
+  elements.input.focus();
+};
+
 export const renderFeed = (title, description) => {
   const feedsContainer = document.querySelector('.col-md-10.feeds');
   const cardDiv1 = document.createElement('div');
@@ -87,65 +100,6 @@ const renderPostsBody = () => {
 
   divContainer.appendChild(ul);
 };
-// не мое
-const createPostButton = (id, t) => {
-  const button = document.createElement('button');
-  button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-  button.setAttribute('type', 'button');
-  button.setAttribute('data-id', id);
-  button.setAttribute('data-bs-toggle', 'modal');
-  button.setAttribute('data-bs-target', '#modal');
-  button.textContent = t('viewPostButton');
-  return button;
-};
-// не мое
-const createPostLink = (url, id, title, feedId) => {
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('data-id', id);
-  link.setAttribute('target', '_blank');
-  link.setAttribute('rel', 'noopener noreferrer');
-  link.setAttribute('id', feedId);
-  link.classList.add('fw-bold');
-  link.textContent = title;
-  return link;
-};
-// не мое
-const createPostElems = (posts, t) => posts.map((post) => {
-  const postCard = document.createElement('li');
-  postCard.classList.add(
-    'list-group-item',
-    'd-flex',
-    'justify-content-between',
-    'align-items-start',
-    'border-0',
-    'border-end-0',
-  );
-  const link = createPostLink(post.link, post.id, post.title, post.feedId);
-  const button = createPostButton(post.id, t);
-  postCard.append(link, button);
-
-  return postCard;
-});
-const createPostList = (postElems, t) => {
-  const postHolder = document.createElement('div');
-  postHolder.classList.add('card', 'border-0');
-
-  const postTitleBox = document.createElement('div');
-  postTitleBox.classList.add('card-body');
-
-  const postTitle = document.createElement('h2');
-  postTitle.classList.add('card-title', 'h4');
-  postTitle.textContent = t('postsTitle');
-  postTitleBox.append(postTitle);
-
-  const postUl = document.createElement('ul');
-  postUl.classList.add('list-group', 'border-0', 'rounded-0');
-
-  postUl.append(...postElems);
-  postHolder.append(postTitleBox, postUl);
-  return postHolder;
-};
 
 const renderPost = (id, title, description, url) => {
   const ul = document.querySelector('.list-group.border-0.rounded-0');
@@ -157,6 +111,7 @@ const renderPost = (id, title, description, url) => {
   li.appendChild(viewButton);
   ul.appendChild(li);
 };
+
 const watch = (formElements, i18n, state) => {
   const elements = { ...formElements };
   const watchedState = onChange(state, (path, value) => {
@@ -170,7 +125,6 @@ const watch = (formElements, i18n, state) => {
       elements.feedback.classList.remove('text-success');
       elements.feedback.textContent = i18n.t(value);
     }
-    // надо будет на currentState = sending еще сдлеать кейс
     if (path === 'feeds') {
       value.forEach((feed) => {
         renderFeed(feed.title, feed.description);
@@ -178,7 +132,6 @@ const watch = (formElements, i18n, state) => {
     }
     if (path === 'posts') {
       renderPostsBody();
-
       value.forEach((item) => {
         item.forEach((post) => {
           renderPost(post.id, post.title, post.description, post.url);
@@ -188,31 +141,6 @@ const watch = (formElements, i18n, state) => {
   });
 
   return watchedState;
-};
-const elements = {
-  form: document.querySelector('.rss-form.text-body'),
-  input: document.querySelector('.form-control.w-100'),
-  inputLabel: document.querySelector('[for="url-input"]'),
-  feedback: document.querySelector('.feedback.m-0'),
-  submitButton: document.querySelector('.h-100.btn.btn-lg.btn-primary'),
-};
-
-const caseSending = () => {
-  console.log('sending');
-  elements.submitButton.disabled = true;
-};
-
-const caseFilling = () => {
-  console.log('filling');
-  elements.submitButton.disable = false;
-  elements.input.focus();
-};
-
-export const renderModalWindowDescription = (title, description, url) => {
-  const modalTitle = document.querySelector('.modal-title');
-  modalTitle.textContent = title;
-  const modalBody = document.querySelector('.modal-body');
-  modalBody.textContent = description;
 };
 
 export default watch;
