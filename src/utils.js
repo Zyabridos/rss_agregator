@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import axios from 'axios';
-import { uniqueId } from 'lodash';
+import { uniqueId, differenceWith, isEqual } from 'lodash';
 import parser from './parser.js';
 
 export const validateRSS = (url, urls) => {
@@ -46,18 +46,23 @@ export const generateFeedsAndPosts = (state, url) => {
     .catch(() => 'network error');
 };
 
-export const updateRSS = (state, url, timeout = 500) => {
+export const updateRSS = (state, timeout = 5000) => {
   const promises = state.feeds.map((feed) => axios
     .get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(feed.url)}`))
     .then((response) => {
       const content = parser(response.data.contents);
       const postsData = getPostsData(content);
-      const feedId = feed.id;
+      const postsWithCurrentId = state.posts
+        .filter((post) => post.feedId === feed.id);
+      const displayedPostLinks = postsWithCurrentId[0].map((post) => post.url);
+      const newPosts = postsData.filter((post) => !displayedPostLinks.includes(post.url));
+      state.posts.unshift(newPosts);
+      // console.log(state.posts);
     })
     .catch((error) => {
       console.log(error);
     }));
-  Promise.all(promises)
+  return Promise.all(promises)
     .then(() => {
       setTimeout(() => updateRSS(state), timeout);
     });

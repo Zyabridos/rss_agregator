@@ -33,6 +33,7 @@ export default async () => {
     submitButton: document.querySelector('.h-100.btn.btn-lg.btn-primary'),
     modalButton: document.querySelector('.btn.btn-outline-primary'),
     modalButtonContainer: document.querySelector('.col-md-10.posts'),
+    postsContainer: document.querySelector('.posts'),
     href: document.querySelector('.fw-bold'),
   };
 

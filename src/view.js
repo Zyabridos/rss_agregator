@@ -101,15 +101,20 @@ const renderPostsBody = () => {
   divContainer.appendChild(ul);
 };
 
-const renderPost = (id, title, description, url) => {
+const renderPost = (state) => {
+  renderPostsBody();
   const ul = document.querySelector('.list-group.border-0.rounded-0');
-  const li = document.createElement('li');
-  li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
-  const viewButton = renderViewPostButton(id);
-  const href = renderHrefPost(id, title, description, url);
-  li.appendChild(href);
-  li.appendChild(viewButton);
-  ul.appendChild(li);
+  state.posts.forEach((item) => {
+    item.forEach((post) => {
+      const li = document.createElement('li');
+      li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+      const viewButton = renderViewPostButton(post.id);
+      const href = renderHrefPost(post.id, post.title, post.description, post.url);
+      li.appendChild(href);
+      li.appendChild(viewButton);
+      ul.appendChild(li);
+    });
+  });
 };
 
 const watch = (formElements, i18n, state) => {
@@ -131,12 +136,7 @@ const watch = (formElements, i18n, state) => {
       });
     }
     if (path === 'posts') {
-      renderPostsBody();
-      value.forEach((item) => {
-        item.forEach((post) => {
-          renderPost(post.id, post.title, post.description, post.url);
-        });
-      });
+      renderPost(state);
     }
   });
 
