@@ -1,8 +1,9 @@
 import i18next from 'i18next';
+import { ModalTitle } from 'react-bootstrap';
 import {
   validateRSS, updateRSS, generateFeedsAndPosts,
 } from './utils.js';
-import watch from './view.js';
+import watch, { renderModal } from './view.js';
 import resources from './locales/ru.js';
 
 const initState = {
@@ -31,10 +32,14 @@ export default async () => {
     inputLabel: document.querySelector('[for="url-input"]'),
     feedback: document.querySelector('.feedback.m-0'),
     submitButton: document.querySelector('.h-100.btn.btn-lg.btn-primary'),
-    modalButton: document.querySelector('.btn.btn-outline-primary'),
-    modalButtonContainer: document.querySelector('.col-md-10.posts'),
+    postButton: document.querySelector('.btn.btn-outline-primary.btn-sm'),
+    postLI: document.querySelector('.list-group-item.d-flex'),
     postsContainer: document.querySelector('.posts'),
     href: document.querySelector('.fw-bold'),
+
+    ModalTitle: document.querySelector('.modal-header'),
+    modalBody: document.querySelector('.modal-body.text-break'),
+    modalWindow: document.querySelector('.modal-footer .btn-primary'),
   };
 
   const i18n = i18next.createInstance();
@@ -55,11 +60,11 @@ export default async () => {
         watchedState.form.currentState = 'sent';
       })
       .catch((err) => {
-        watchedState.form.isValid = false;
-        watchedState.form.error = err.message;
+        watchedState.form = { isValid: false, error: err.message };
       })
       .then(() => {
         generateFeedsAndPosts(watchedState, currentURL);
+        console.log(watchedState);
         // if ('isNotRss') {
         //   watchedState.form = { error: 'isNotRSS', isValid: false, currentState: 'filling' };
         // }
@@ -67,17 +72,19 @@ export default async () => {
       .catch((error) => {
         if ('networkError') {
           watchedState.form = { error: 'networkError', isValid: false, currentState: 'error' };
-        } else throw error;
+        }
       })
       .catch((err) => {
         watchedState.form.isValid = false;
         watchedState.form.error = err.message;
       });
   });
-  updateRSS(watchedState, currentURL, TIMEOUTINTERVAL);
-  formElements.modalButtonContainer.addEventListener('click', (e) => {
-    // ну это работает только если на ссылку нажимать, надо еще и по elements.modalButton
-    e.target.classList.remove('fw-bold');
-    e.target.classList.add('fw-normal', 'link-secondary');
+  formElements.postButton = document.querySelector('.btn.btn-outline-primary.btn-sm');
+  formElements.postsContainer.addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
+      const postID = e.target.getAttribute('data-id');
+      watchedState.ui.viewedPostsIDs.push(postID);
+    }
   });
+  updateRSS(watchedState, currentURL, TIMEOUTINTERVAL);
 };

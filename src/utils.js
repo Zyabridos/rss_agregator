@@ -39,14 +39,15 @@ export const generateFeedsAndPosts = (state, url) => {
       }
       const feed = getFeedData(content, url);
       const posts = getPostsData(content);
-      posts.feedId = feed.id;
       watchedState.feeds = [feed, ...watchedState.feeds];
       watchedState.posts = [posts, ...watchedState.posts];
+      // watchedState.posts.unshift(posts);
+      watchedState.posts.map((post) => console.log(post));
     })
     .catch(() => 'network error');
 };
 
-export const updateRSS = (state, timeout = 5000) => {
+export const updateRSS = (state, timeout = 61000) => {
   const promises = state.feeds.map((feed) => axios
     .get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(feed.url)}`))
     .then((response) => {
@@ -57,6 +58,7 @@ export const updateRSS = (state, timeout = 5000) => {
       const displayedPostLinks = postsWithCurrentId[0].map((post) => post.url);
       const newPosts = postsData.filter((post) => !displayedPostLinks.includes(post.url));
       state.posts.unshift(newPosts);
+      console.log(newPosts);
       // console.log(state.posts);
     })
     .catch((error) => {

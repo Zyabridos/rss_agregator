@@ -5,6 +5,7 @@ export default {
     ru: {
       translation: {
         success: 'RSS успешно загружен',
+        posts: 'Посты',
         errors: {
           validation:
           {
@@ -21,3 +22,8 @@ export default {
     },
   },
 };
+// export default {
+//   translation: {
+//     post: 'Посты',
+//   },
+// };

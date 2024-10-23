@@ -70,6 +70,19 @@ export const renderViewPostButton = (id) => {
   return viewButton;
 };
 
+export const renderModal = (formElements, state) => {
+  const { modalTitle, modalBody } = formElements;
+  const lastViewedPost = state.ui.viewedPostsIDs[state.ui.viewedPostsIDs.length - 1];
+  const currentlyPressedPost = state.posts.find((p) => p.id === lastViewedPost);
+  modalTitle.textContent = currentlyPressedPost.title;
+  modalBody.textContent = currentlyPressedPost.description;
+
+  state.posts.map((post) => post.map((item) => {
+    console.log(item);
+  }));
+  // const activePost = state.posts.find((post) => post.id === currentID);
+  // console.log(state.posts.map((item) => console.log(item)));
+};
 const renderHrefPost = (id, title, description, url) => {
   const href = document.createElement('a');
   setAttributes(href, { href: url, 'data-id': id });
@@ -80,7 +93,7 @@ const renderHrefPost = (id, title, description, url) => {
   return href;
 };
 
-const renderPostsBody = () => {
+const renderPostsBody = (i18n) => {
   const postsContainer = document.querySelector('.mx-auto.posts');
   const divContainer = document.createElement('div');
   divContainer.classList.add('card', 'border-0');
@@ -89,6 +102,7 @@ const renderPostsBody = () => {
   h2Body.classList.add('card-body');
 
   const h2 = document.createElement('h2');
+  // h2.textContent = i18n.t('posts');
   h2.textContent = 'Посты';
 
   const ul = document.createElement('ul');
@@ -101,8 +115,8 @@ const renderPostsBody = () => {
   divContainer.appendChild(ul);
 };
 
-const renderPost = (state) => {
-  renderPostsBody();
+const renderPost = (state, i18n) => {
+  renderPostsBody(i18n);
   const ul = document.querySelector('.list-group.border-0.rounded-0');
   state.posts.forEach((item) => {
     item.forEach((post) => {
@@ -137,6 +151,9 @@ const watch = (formElements, i18n, state) => {
     }
     if (path === 'posts') {
       renderPost(state);
+    }
+    if (path === 'ui.viewedPostsIDs') {
+      renderModal(formElements, state);
     }
   });
 
