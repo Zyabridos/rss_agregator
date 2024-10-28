@@ -1,4 +1,4 @@
-export const renderFeed = (title, description) => {
+export default (title, description) => {
   const feedsContainer = document.querySelector('.col-md-10.feeds');
   const cardDiv1 = document.createElement('div');
   cardDiv1.classList.add('card', 'border-0');
@@ -27,5 +27,3 @@ export const renderFeed = (title, description) => {
   cardDiv1.appendChild(ul);
   feedsContainer.appendChild(cardDiv1);
 };
-
-export default renderFeed;

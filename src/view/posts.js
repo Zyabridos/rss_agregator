@@ -20,7 +20,7 @@ const renderHrefPost = (id, title, url) => {
   return href;
 };
 
-const renderPostsBody = (i18n) => {
+const renderPostsBody = () => {
   const postsContainer = document.querySelector('.mx-auto.posts');
   const divContainer = document.createElement('div');
   divContainer.classList.add('card', 'border-0');
@@ -29,7 +29,6 @@ const renderPostsBody = (i18n) => {
   h2Body.classList.add('card-body');
 
   const h2 = document.createElement('h2');
-  // h2.textContent = i18n.t('posts');
   h2.textContent = 'Посты';
 
   const ul = document.createElement('ul');
@@ -42,7 +41,7 @@ const renderPostsBody = (i18n) => {
   divContainer.appendChild(ul);
 };
 
-const renderPost = (state, i18n) => {
+export default (state, i18n) => {
   renderPostsBody(i18n);
   const ul = document.querySelector('.list-group.border-0.rounded-0');
   state.posts.forEach((post) => {
@@ -55,5 +54,3 @@ const renderPost = (state, i18n) => {
     ul.appendChild(li);
   });
 };
-
-export default renderPost;

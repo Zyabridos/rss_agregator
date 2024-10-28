@@ -1,5 +1,5 @@
 import onChange from 'on-change';
-import { caseFilling, caseSending, caseSent } from './formState.js';
+import caseSent from './formState.js';
 import renderPost from './posts.js';
 import { renderModal } from './modalWindow.js';
 import renderFeed from './feed.js';
