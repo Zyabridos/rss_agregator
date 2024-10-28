@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import axios from 'axios';
-import { uniqueId, differenceWith, isEqual } from 'lodash';
+import { uniqueId } from 'lodash';
 import parser from './parser.js';
 
 export const validateRSS = (url, urls) => {
@@ -11,6 +11,13 @@ export const validateRSS = (url, urls) => {
     .required('errors.validation.required')
     .notOneOf(urls, 'errors.validation.repeat');
   return schema.validate(url);
+};
+
+export const setAttributes = (element, attributes) => {
+  /* eslint-disable */
+  for (const key in attributes) {
+    element.setAttribute(key, attributes[key]);
+  }
 };
 
 const getPostsData = (content) => Array.from(content.querySelectorAll('item'))
@@ -41,39 +48,30 @@ export const generateFeedsAndPosts = (state, url) => {
       const posts = getPostsData(content);
       watchedState.feeds = [feeds, ...watchedState.feeds];
       watchedState.posts = [...posts, ...watchedState.posts];
+      return watchedState;
     })
-    .catch(() => 'network error');
+    .catch((error) => {
+      watchedState.error = error;
+    });
 };
 
-export const updateRSS = (state, timeout = 61000) => {
+export const updateRSS = (state, timeout = 10000) => {
   const watchedState = state;
-  // generateFeedsAndPosts(watchedState, watchedState.rssFeddsUrls);
-  console.log(watchedState);
-  console.log('1');
-  // console.log(watchedState);
-  // console.log(state.feeds[0].url);
-  // console.log(state);
-  // console.log('1');
-  // const promises =
-  watchedState.feeds.map((feed) => console.log(feed));
-  // axios
-  // .get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(feed.url)}`))
-  // .then((response) => {
-  //   console.log('2');
-  //   const content = parser(response.data.contents);
-  //   const postsData = getPostsData(content);
-  //   const postsWithCurrentId = state.posts
-  //     .filter((post) => post.feedId === feed.id);
-  //   const displayedPostLinks = postsWithCurrentId[0].map((post) => post.url);
-  //   const newPosts = postsData.filter((post) => !displayedPostLinks.includes(post.url));
-  //   state.posts = [...newPosts, ...state.posts];
-  //   console.log('a');
-  // })
-  //   .catch((error) => {
-  //     console.log(error);
-  //   }));
-  // return Promise.all(promises)
-  //   .then(() => {
-  //     setTimeout(() => updateRSS(state), timeout);
-  //   });
+  const promises = watchedState.feeds.map((feed) => {
+    axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(feed.url)}`))
+      .then((response) => {
+        const content = parser(response.data.contents);
+        const postsData = getPostsData(content);
+        const displayedPostLinks = watchedState.posts.map((post) => post.url);
+        const newPosts = postsData.filter((post) => !displayedPostLinks.includes(post.url));
+        watchedState.posts = [...newPosts, ...state.posts];
+      })
+      .catch((error) => {
+        watchedState.error = error;
+      });
+  });
+  return Promise.all(promises)
+    .then(() => {
+      setTimeout(() => updateRSS(state), timeout);
+    });
 };

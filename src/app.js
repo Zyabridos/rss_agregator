@@ -1,8 +1,11 @@
+import './styles.scss';
+import 'bootstrap';
 import i18next from 'i18next';
 import {
   validateRSS, updateRSS, generateFeedsAndPosts,
 } from './utils.js';
-import watch from './view.js';
+import watch from './view/view.js';
+import { renderSeenPost } from './view/modalWindow.js';
 import resources from './locales/ru.js';
 
 const initState = {
@@ -19,10 +22,7 @@ const initState = {
   },
 };
 
-// надо будет или таймаут поменять на минуту,
-// Или на что-то другое - проверь, передается ли где интервал апдейта с rss,
-// или интервал апдейта устанавливаю я
-const TIMEOUTINTERVAL = 1000;
+const TIMEOUTINTERVAL = 61000;
 
 export default async () => {
   const formElements = {
@@ -34,7 +34,6 @@ export default async () => {
     postButton: document.querySelector('.btn.btn-outline-primary.btn-sm'),
     postLI: document.querySelector('.list-group-item.d-flex'),
     postsContainer: document.querySelector('.posts'),
-    href: document.querySelector('.fw-bold'),
 
     modalTitle: document.querySelector('.modal-header'),
     modalBody: document.querySelector('.modal-body.text-break'),
@@ -44,6 +43,7 @@ export default async () => {
   const i18n = i18next.createInstance();
   i18n.init(resources);
   const watchedState = watch(formElements, i18n, initState);
+
   formElements.form.addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -57,19 +57,8 @@ export default async () => {
         watchedState.form.rssFeedsUrls.push(currentURL);
         watchedState.form.currentState = 'sent';
       })
-      .catch((err) => {
-        watchedState.form = { isValid: false, error: err.message };
-      })
       .then(() => {
         generateFeedsAndPosts(watchedState, currentURL);
-        // if ('isNotRss') {
-        //   watchedState.form = { error: 'isNotRSS', isValid: false, currentState: 'filling' };
-        // }
-      })
-      .catch((error) => {
-        if ('networkError') {
-          watchedState.form = { error: 'networkError', isValid: false, currentState: 'error' };
-        }
       })
       .catch((err) => {
         watchedState.form.isValid = false;
@@ -77,11 +66,6 @@ export default async () => {
       });
     updateRSS(watchedState, TIMEOUTINTERVAL);
   });
-  formElements.postButton = document.querySelector('.btn.btn-outline-primary.btn-sm');
-  formElements.postsContainer.addEventListener('click', (e) => {
-    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
-      const postID = e.target.getAttribute('data-id');
-      watchedState.ui.viewedPostsIDs.push(postID);
-    }
-  });
+
+  renderSeenPost(formElements, watchedState);
 };

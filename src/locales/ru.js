@@ -13,6 +13,7 @@ export default {
             invalidURL: 'Ссылка должна быть валидным URL',
             repeat: 'RSS уже существует',
             isNotRSS: 'Ресурс не содержит валидный RSS',
+            networkError: 'Ошибка сети',
           },
         },
         subtitle: 'Начните читать RSS сегодня! Это легко, это красиво.',
@@ -22,8 +23,3 @@ export default {
     },
   },
 };
-// export default {
-//   translation: {
-//     post: 'Посты',
-//   },
-// };
