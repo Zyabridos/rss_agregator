@@ -6,7 +6,7 @@ export default (data) => {
     // const error = new Error(errorNode.textContent);
     // error.isNotRSS = true;
     // throw error;
-    return false;
+    return '0';
   }
   return content;
 };

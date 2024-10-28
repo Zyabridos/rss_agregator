@@ -1,9 +1,8 @@
 import i18next from 'i18next';
-import { ModalTitle } from 'react-bootstrap';
 import {
   validateRSS, updateRSS, generateFeedsAndPosts,
 } from './utils.js';
-import watch, { renderModal } from './view.js';
+import watch from './view.js';
 import resources from './locales/ru.js';
 
 const initState = {
@@ -37,7 +36,7 @@ export default async () => {
     postsContainer: document.querySelector('.posts'),
     href: document.querySelector('.fw-bold'),
 
-    ModalTitle: document.querySelector('.modal-header'),
+    modalTitle: document.querySelector('.modal-header'),
     modalBody: document.querySelector('.modal-body.text-break'),
     modalWindow: document.querySelector('.modal-footer .btn-primary'),
   };
@@ -45,13 +44,12 @@ export default async () => {
   const i18n = i18next.createInstance();
   i18n.init(resources);
   const watchedState = watch(formElements, i18n, initState);
-  let currentURL;
   formElements.form.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const formData = new FormData(formElements.form);
     const data = Object.fromEntries(formData);
-    currentURL = (data.url).trim();
+    const currentURL = (data.url).trim();
     validateRSS(currentURL, watchedState.form.rssFeedsUrls)
       .then(() => {
         watchedState.isValid = true;
@@ -64,7 +62,6 @@ export default async () => {
       })
       .then(() => {
         generateFeedsAndPosts(watchedState, currentURL);
-        console.log(watchedState);
         // if ('isNotRss') {
         //   watchedState.form = { error: 'isNotRSS', isValid: false, currentState: 'filling' };
         // }
@@ -78,6 +75,7 @@ export default async () => {
         watchedState.form.isValid = false;
         watchedState.form.error = err.message;
       });
+    updateRSS(watchedState, TIMEOUTINTERVAL);
   });
   formElements.postButton = document.querySelector('.btn.btn-outline-primary.btn-sm');
   formElements.postsContainer.addEventListener('click', (e) => {
@@ -86,5 +84,4 @@ export default async () => {
       watchedState.ui.viewedPostsIDs.push(postID);
     }
   });
-  updateRSS(watchedState, currentURL, TIMEOUTINTERVAL);
 };

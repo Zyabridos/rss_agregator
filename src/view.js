@@ -7,14 +7,13 @@ const setAttributes = (element, attributes) => {
 };
 
 const caseSent = (formElements, i18n) => {
-  console.log('sent');
-  const elements = { ...formElements };
-  elements.input.focus();
-  elements.submitButton.disabled = false;
-  elements.input.value = '';
-  elements.feedback.textContent = i18n.t('success');
-  elements.feedback.classList.remove('text-danger');
-  elements.feedback.classList.add('text-success');
+  const { input, submitButton, feedback } = formElements;
+  input.focus();
+  submitButton.disabled = false;
+  input.value = '';
+  feedback.textContent = i18n.t('success');
+  feedback.classList.remove('text-danger');
+  feedback.classList.add('text-success');
 };
 
 const caseSending = (formElements) => {
@@ -70,20 +69,25 @@ export const renderViewPostButton = (id) => {
   return viewButton;
 };
 
+const renderSeenPosts = (postIDtoDeactivate) => {
+  const pressedLinksTitle = document.querySelector(`li a[data-id="${postIDtoDeactivate}"]`);
+  pressedLinksTitle.classList.remove('fw-bold');
+  pressedLinksTitle.classList.add('link-secondary', 'fw-normal');
+};
+
 export const renderModal = (formElements, state) => {
   const { modalTitle, modalBody } = formElements;
-  const lastViewedPost = state.ui.viewedPostsIDs[state.ui.viewedPostsIDs.length - 1];
-  const currentlyPressedPost = state.posts.find((p) => p.id === lastViewedPost);
-  modalTitle.textContent = currentlyPressedPost.title;
-  modalBody.textContent = currentlyPressedPost.description;
-
-  state.posts.map((post) => post.map((item) => {
-    console.log(item);
-  }));
-  // const activePost = state.posts.find((post) => post.id === currentID);
-  // console.log(state.posts.map((item) => console.log(item)));
+  const lastViewedPostID = state.ui.viewedPostsIDs[state.ui.viewedPostsIDs.length - 1];
+  const currentlyPressedPost = state.posts.find((p) => p.id === lastViewedPostID);
+  const activePost = state.posts.find((post) => post.id === currentlyPressedPost.id);
+  if (activePost) {
+    modalTitle.textContent = activePost.title;
+    modalBody.textContent = activePost.description;
+    renderSeenPosts(currentlyPressedPost.id);
+  }
 };
-const renderHrefPost = (id, title, description, url) => {
+
+const renderHrefPost = (id, title, url) => {
   const href = document.createElement('a');
   setAttributes(href, { href: url, 'data-id': id });
   href.setAttribute('tagret', '_blank');
@@ -118,42 +122,43 @@ const renderPostsBody = (i18n) => {
 const renderPost = (state, i18n) => {
   renderPostsBody(i18n);
   const ul = document.querySelector('.list-group.border-0.rounded-0');
-  state.posts.forEach((item) => {
-    item.forEach((post) => {
-      const li = document.createElement('li');
-      li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
-      const viewButton = renderViewPostButton(post.id);
-      const href = renderHrefPost(post.id, post.title, post.description, post.url);
-      li.appendChild(href);
-      li.appendChild(viewButton);
-      ul.appendChild(li);
-    });
+  state.posts.forEach((post) => {
+    const li = document.createElement('li');
+    li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+    const viewButton = renderViewPostButton(post.id);
+    const href = renderHrefPost(post.id, post.title, post.url);
+    li.appendChild(href);
+    li.appendChild(viewButton);
+    ul.appendChild(li);
   });
 };
 
 const watch = (formElements, i18n, state) => {
   const elements = { ...formElements };
   const watchedState = onChange(state, (path, value) => {
-    // console.log(`path is: ${path}`);
-    if (path === 'isValid') {
-      caseSent(elements, i18n);
-    }
-    if (path === 'form.error') {
-      console.log(value);
-      elements.feedback.classList.add('text-danger');
-      elements.feedback.classList.remove('text-success');
-      elements.feedback.textContent = i18n.t(value);
-    }
-    if (path === 'feeds') {
-      value.forEach((feed) => {
-        renderFeed(feed.title, feed.description);
-      });
-    }
-    if (path === 'posts') {
-      renderPost(state);
-    }
-    if (path === 'ui.viewedPostsIDs') {
-      renderModal(formElements, state);
+    switch (path) {
+      case 'isValid':
+        caseSent(elements, i18n);
+        break;
+      case 'form.error':
+        console.log(value);
+        elements.feedback.classList.add('text-danger');
+        elements.feedback.classList.remove('text-success');
+        elements.feedback.textContent = i18n.t(value);
+        break;
+      case 'feeds':
+        value.forEach((feed) => {
+          renderFeed(feed.title, feed.description);
+        });
+        break;
+      case 'posts':
+        renderPost(state);
+        break;
+      case 'ui.viewedPostsIDs':
+        renderModal(formElements, state);
+        break;
+      default:
+        break;
     }
   });
 
