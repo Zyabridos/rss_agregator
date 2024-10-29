@@ -1,4 +1,4 @@
-export default (title, description) => {
+export default (title, description, i18n) => {
   const feedsContainer = document.querySelector('.col-md-10.feeds');
   const cardDiv1 = document.createElement('div');
   cardDiv1.classList.add('card', 'border-0');
@@ -6,7 +6,7 @@ export default (title, description) => {
   cardDiv2.classList.add('card-body');
   const h2Feed = document.createElement('h2');
   h2Feed.classList.add('card-title', 'h4');
-  h2Feed.innerText = 'Фиды';
+  h2Feed.innerText = i18n.t('feeds.feedTitle');
 
   const ul = document.createElement('ul');
   ul.classList.add('list-group', 'border-0', 'rounded-0');

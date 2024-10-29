@@ -1,12 +1,12 @@
-import { setAttributes } from '../utils.js';
+import { setAttributes } from '../utils/utils.js';
 
-const renderViewPostButton = (id) => {
+const renderViewPostButton = (id, i18n) => {
   const viewButton = document.createElement('button');
   setAttributes(viewButton, {
     type: 'button', 'data-id': id, 'data-bs-toggle': 'modal', 'data-bs-target': '#modal',
   });
   viewButton.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-  viewButton.innerText = 'Просмотр';
+  viewButton.innerText = i18n.t('posts.viewButton');
   return viewButton;
 };
 
@@ -20,8 +20,8 @@ const renderHrefPost = (id, title, url) => {
   return href;
 };
 
-const renderPostsBody = (state, formElements) => {
-  const { postsContainer } = { ...formElements };
+const renderPostsBody = (elements, i18n) => {
+  const { postsContainer } = { ...elements };
   postsContainer.innerHTML = '';
   const divContainer = document.createElement('div');
   divContainer.classList.add('card', 'border-0');
@@ -30,7 +30,7 @@ const renderPostsBody = (state, formElements) => {
   postTitleContainer.classList.add('card-body');
 
   const postTitle = document.createElement('h2');
-  postTitle.textContent = 'Посты';
+  postTitle.textContent = i18n.t('posts.postsTitle');
   postTitleContainer.appendChild(postTitle);
 
   const postUL = document.createElement('ul');
@@ -41,13 +41,13 @@ const renderPostsBody = (state, formElements) => {
   postsContainer.appendChild(divContainer);
 };
 
-export default (state, formElements) => {
-  renderPostsBody(state, formElements);
+export default (elements, i18n, state) => {
+  renderPostsBody(elements, i18n);
   const postUL = document.querySelector('.list-group.border-0.rounded-0');
   state.posts.forEach((post) => {
     const li = document.createElement('li');
     li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
-    const viewButton = renderViewPostButton(post.id);
+    const viewButton = renderViewPostButton(post.id, i18n);
     const href = renderHrefPost(post.id, post.title, post.url);
     li.appendChild(href);
     li.appendChild(viewButton);

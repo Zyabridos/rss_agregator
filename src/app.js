@@ -1,12 +1,11 @@
 import './styles.scss';
 import 'bootstrap';
 import i18next from 'i18next';
-import {
-  validateRSS, updateRSS, generateFeedsAndPosts,
-} from './utils.js';
+import { validateRSS } from './utils/utils.js';
+import { updateRSS, generateFeedsAndPosts } from './utils/rssutils.js';
 import watch from './view/view.js';
 import { renderSeenPost } from './view/modalWindow.js';
-import resources from './locales/ru.js';
+import resources from './locales/index.js';
 
 const initState = {
   form: {
@@ -22,6 +21,7 @@ const initState = {
   },
 };
 
+const DEFAULTLNG = 'ru';
 const TIMEOUTINTERVAL = 2000;
 
 export default async () => {
@@ -41,7 +41,11 @@ export default async () => {
   };
 
   const i18n = i18next.createInstance();
-  i18n.init(resources);
+  i18n.init({
+    resources,
+    debug: true,
+    lng: DEFAULTLNG,
+  });
   const watchedState = watch(formElements, i18n, initState);
 
   formElements.form.addEventListener('submit', (e) => {
