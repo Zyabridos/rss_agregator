@@ -1,6 +1,6 @@
 import onChange from 'on-change';
 import caseSent from './formState.js';
-import renderPost from './posts.js';
+import renderPosts from './posts.js';
 import { renderModal } from './modalWindow.js';
 import renderFeed from './feed.js';
 
@@ -28,7 +28,7 @@ const watch = (formElements, i18n, state) => {
         });
         break;
       case 'posts':
-        renderPost(state);
+        renderPosts(state, formElements);
         break;
       case 'ui.viewedPostsIDs':
         renderModal(formElements, state);

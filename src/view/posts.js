@@ -20,30 +20,30 @@ const renderHrefPost = (id, title, url) => {
   return href;
 };
 
-const renderPostsBody = () => {
-  const postsContainer = document.querySelector('.mx-auto.posts');
+const renderPostsBody = (state, formElements) => {
+  const { postsContainer } = { ...formElements };
+  postsContainer.innerHTML = '';
   const divContainer = document.createElement('div');
   divContainer.classList.add('card', 'border-0');
 
-  const h2Body = document.createElement('div');
-  h2Body.classList.add('card-body');
+  const postTitleContainer = document.createElement('div');
+  postTitleContainer.classList.add('card-body');
 
-  const h2 = document.createElement('h2');
-  h2.textContent = 'Посты';
+  const postTitle = document.createElement('h2');
+  postTitle.textContent = 'Посты';
+  postTitleContainer.appendChild(postTitle);
 
-  const ul = document.createElement('ul');
-  ul.classList.add('list-group', 'border-0', 'rounded-0');
+  const postUL = document.createElement('ul');
+  postUL.classList.add('list-group', 'border-0', 'rounded-0');
 
+  divContainer.appendChild(postTitleContainer);
+  divContainer.appendChild(postUL);
   postsContainer.appendChild(divContainer);
-  divContainer.appendChild(h2Body);
-  h2Body.appendChild(h2);
-
-  divContainer.appendChild(ul);
 };
 
-export default (state, i18n) => {
-  renderPostsBody(i18n);
-  const ul = document.querySelector('.list-group.border-0.rounded-0');
+export default (state, formElements) => {
+  renderPostsBody(state, formElements);
+  const postUL = document.querySelector('.list-group.border-0.rounded-0');
   state.posts.forEach((post) => {
     const li = document.createElement('li');
     li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
@@ -51,6 +51,13 @@ export default (state, i18n) => {
     const href = renderHrefPost(post.id, post.title, post.url);
     li.appendChild(href);
     li.appendChild(viewButton);
-    ul.appendChild(li);
+    postUL.appendChild(li);
+    if (state.ui.viewedPostsIDs.includes(post.id)) {
+      href.classList.remove('fw-bold');
+      href.classList.add('fw-normal', 'text-muted');
+    } else {
+      href.classList.add('fw-bold');
+      href.classList.remove('fw-normal', 'text-muted');
+    }
   });
 };

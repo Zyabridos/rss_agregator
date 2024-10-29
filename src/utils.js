@@ -55,21 +55,20 @@ export const generateFeedsAndPosts = (state, url) => {
     });
 };
 
-export const updateRSS = (state, timeout = 10000) => {
+export const updateRSS = (state, timeout = 2000) => {
   const watchedState = state;
-  console.log('раз')
+  // console.log('раз')
   const promises = watchedState.feeds.map((feed) => {
     axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(feed.url)}`))
       .then((response) => {
-        console.log('два')
+        //  console.log('два')
         const content = parser(response.data.contents);
         const postsData = getPostsData(content);
-        console.log(postsData)
         const displayedPostLinks = watchedState.posts.map((post) => post.url);
-        console.log(displayedPostLinks)
         const newPosts = postsData.filter((post) => !displayedPostLinks.includes(post.url));
-        console.log(newPosts)
         watchedState.posts = [...newPosts, ...state.posts];
+        // console.log(watchedState.posts)
+        return watchedState
       })
       .catch((error) => {
         watchedState.error = error;

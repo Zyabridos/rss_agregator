@@ -22,7 +22,7 @@ const initState = {
   },
 };
 
-const TIMEOUTINTERVAL = 5000;
+const TIMEOUTINTERVAL = 2000;
 
 export default async () => {
   const formElements = {
