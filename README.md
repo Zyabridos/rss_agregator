@@ -6,7 +6,7 @@
 
 ### Description of the project
 
-This project allows to read RSS news with an automatic update of the news. Since the project does not has a hosting, this programm will be working only on your local computer.
+This project allows to read RSS news with an automatic update of the news. Since the project does not have a hosting, this programm will be working only on your local computer.
 
   
 
