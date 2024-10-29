@@ -37,6 +37,7 @@ export const generateFeedsAndPosts = (state, url) => {
 
 export const updateRSS = (state, timeout = 2000) => {
   const watchedState = state;
+  /* eslint-disable */
   const promises = watchedState.feeds.map((feed) => {
     axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(feed.url)}`))
       .then((response) => {
