@@ -6,5 +6,5 @@ jobs:
     steps:
       - name: Install reprository and check it
         uses: actions/checkout@v4      
-      - run: make install-deps
+      - run: make install
       - run: make lint
