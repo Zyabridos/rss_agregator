@@ -6,7 +6,7 @@
 
 ### Description of the project
 
-This project allows to read RSS news with an automatic update of the news. Since the project does not have a hosting, this programm will be working only on your local computer.
+This project allows to read RSS sources with an automatic update.
 
   
 
@@ -27,15 +27,9 @@ $  git  clone  https://github.com/Zyabridos/rss_agregator
 
 $  make  install
 
-$  make  develop
+$  make  build
 
 ```
 
 ### Usage
-
-Open web-browse, and go to the local host - look for the following string in your terminal:
-
-```
-<i> [webpack-dev-server] Loopback: http://localhost:8080/, http://[::1]:8080/
-```
-Adress at loopback is the adress of the localhost (normally it is http://localhost:8080/)
+[Deployed project](https://rss-agregator-kqnjeg4s2-zyabridos-projects.vercel.app/)
