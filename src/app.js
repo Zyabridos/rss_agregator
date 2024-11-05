@@ -10,7 +10,7 @@ import resources from './locales/index.js';
 const initState = {
   form: {
     error: '',
-    rssFeedsUrls: [],
+    // rssFeedsUrls: [],
     currentState: 'filling',
   },
   feeds: [],
@@ -52,11 +52,10 @@ export default async () => {
     const formData = new FormData(formElements.form);
     const data = Object.fromEntries(formData);
     const currentURL = new URL((data.url).trim()).href;
+    const rssFeedsUrls = watchedState.feeds.map((feed) => feed.url);
     watchedState.form.currentState = 'sending';
-    validateRSS(currentURL, watchedState.form.rssFeedsUrls)
+    validateRSS(currentURL, rssFeedsUrls)
       .then(() => {
-        // watchedState.form.currentState = 'sending';
-        watchedState.form.rssFeedsUrls.push(currentURL);
         watchedState.form.currentState = 'sent';
         getFeedsAndPostsData(watchedState, currentURL);
       })
