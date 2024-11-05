@@ -1,4 +1,4 @@
-export default (title, description, i18n) => {
+export default (state, i18n) => {
   const feedsContainer = document.querySelector('.col-md-10.feeds');
   const cardDiv1 = document.createElement('div');
   cardDiv1.classList.add('card', 'border-0');
@@ -8,22 +8,24 @@ export default (title, description, i18n) => {
   h2Feed.classList.add('card-title', 'h4');
   h2Feed.innerText = i18n.t('feeds.feedTitle');
 
-  const ul = document.createElement('ul');
-  ul.classList.add('list-group', 'border-0', 'rounded-0');
-  const li = document.createElement('li');
-  li.classList.add('list-group-item', 'border-0', 'border-end-0');
-  const h3Description = document.createElement('h3');
-  h3Description.classList.add('h6', 'm-0');
-  h3Description.textContent = title;
-  const pDescription = document.createElement('p');
-  pDescription.classList.add('m-0', 'small', 'text-black-50');
-  pDescription.textContent = description;
+  state.feeds.forEach((feed) => {
+    const ul = document.createElement('ul');
+    ul.classList.add('list-group', 'border-0', 'rounded-0');
+    const li = document.createElement('li');
+    li.classList.add('list-group-item', 'border-0', 'border-end-0');
+    const h3Description = document.createElement('h3');
+    h3Description.classList.add('h6', 'm-0');
+    h3Description.textContent = feed.title;
+    const pDescription = document.createElement('p');
+    pDescription.classList.add('m-0', 'small', 'text-black-50');
+    pDescription.textContent = feed.description;
 
-  li.appendChild(h3Description);
-  li.appendChild(pDescription);
-  ul.appendChild(li);
-  cardDiv2.appendChild(h2Feed);
-  cardDiv1.appendChild(cardDiv2);
-  cardDiv1.appendChild(ul);
-  feedsContainer.appendChild(cardDiv1);
+    li.appendChild(h3Description);
+    li.appendChild(pDescription);
+    ul.appendChild(li);
+    cardDiv2.appendChild(h2Feed);
+    cardDiv1.appendChild(cardDiv2);
+    cardDiv1.appendChild(ul);
+    feedsContainer.appendChild(cardDiv1);
+  });
 };

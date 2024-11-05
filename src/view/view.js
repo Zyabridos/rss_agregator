@@ -15,9 +15,7 @@ const watch = (formElements, i18n, state) => {
         renderFormState(elements, i18n, value);
         break;
       case 'feeds':
-        value.forEach((feed) => {
-          renderFeed(feed.title, feed.description, i18n);
-        });
+        renderFeed(state, i18n);
         break;
       case 'posts':
         renderPosts(formElements, i18n, state);
