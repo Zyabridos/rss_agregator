@@ -2,7 +2,7 @@ import './styles.scss';
 import 'bootstrap';
 import i18next from 'i18next';
 import { validateRSS } from './utils/utils.js';
-import { updateRSS, generateFeedsAndPosts } from './utils/rssutils.js';
+import { updateRSS, getFeedsAndPostsData } from './utils/rssutils.js';
 import watch from './view/view.js';
 import { renderSeenPost } from './view/modalWindow.js';
 import resources from './locales/index.js';
@@ -12,7 +12,6 @@ const initState = {
     error: '',
     rssFeedsUrls: [],
     currentState: 'filling',
-    isValid: false,
   },
   feeds: [],
   posts: [],
@@ -50,22 +49,19 @@ export default async () => {
 
   formElements.form.addEventListener('submit', (e) => {
     e.preventDefault();
-
     const formData = new FormData(formElements.form);
     const data = Object.fromEntries(formData);
-    const currentURL = (data.url).trim();
+    const currentURL = new URL((data.url).trim()).href;
+    watchedState.form.currentState = 'sending';
     validateRSS(currentURL, watchedState.form.rssFeedsUrls)
       .then(() => {
-        watchedState.isValid = true;
-        watchedState.form.currentState = 'sending';
+        // watchedState.form.currentState = 'sending';
         watchedState.form.rssFeedsUrls.push(currentURL);
         watchedState.form.currentState = 'sent';
+        getFeedsAndPostsData(watchedState, currentURL);
       })
-      .then(() => {
-        generateFeedsAndPosts(watchedState, currentURL);
-      })
+
       .catch((err) => {
-        watchedState.form.isValid = false;
         watchedState.form.error = err.message;
       });
     updateRSS(watchedState, TIMEOUTINTERVAL);

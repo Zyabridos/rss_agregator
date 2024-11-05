@@ -1,5 +1,5 @@
 import onChange from 'on-change';
-import { renderErrors, watchFormState } from './formState.js';
+import { renderErrors, renderFormState } from './formState.js';
 import renderPosts from './posts.js';
 import { renderModal } from './modalWindow.js';
 import renderFeed from './feed.js';
@@ -12,7 +12,7 @@ const watch = (formElements, i18n, state) => {
         renderErrors(elements, value, i18n);
         break;
       case 'form.currentState':
-        watchFormState(elements, i18n, value);
+        renderFormState(elements, i18n, value);
         break;
       case 'feeds':
         value.forEach((feed) => {

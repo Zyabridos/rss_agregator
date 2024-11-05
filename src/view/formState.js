@@ -17,22 +17,22 @@ const caseSent = (elements, i18n) => {
   feedback.classList.add('text-success');
 };
 
-const caseSending = (elements) => {
+const caseSending = (elements, i18n) => {
   const { input, submitButton, feedback } = elements;
   submitButton.disabled = true;
   input.disabled = true;
-  feedback.textContent = '';
+  feedback.textContent = i18n.t('sending');
 };
 
-export const watchFormState = (elements, i18n, formCurrentState) => {
+export const renderFormState = (elements, i18n, formCurrentState) => {
   switch (formCurrentState) {
     case 'sending':
-      caseSending(elements);
+      caseSending(elements, i18n);
       break;
     case 'sent':
       caseSent(elements, i18n);
       break;
     default:
-      throw new Error('Unknown state of form');
+      throw new Error(`Unknown state of form: ${formCurrentState}`);
   }
 };

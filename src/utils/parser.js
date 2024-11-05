@@ -6,6 +6,17 @@ export default (data) => {
     const error = new Error(errorNode.textContent);
     error.isNotRSS = true;
     throw error;
+  } else {
+    const feedData = {
+      feedTitle: content.querySelector('title').textContent,
+      description: content.querySelector('description').textContent,
+    };
+    const postsData = Array.from(content.querySelectorAll('item'))
+      .map((post) => ({
+        title: post.querySelector('title').textContent,
+        description: post.querySelector('description').textContent,
+        url: post.querySelector('link').textContent,
+      }));
+    return { feedData, postsData };
   }
-  return content;
 };
