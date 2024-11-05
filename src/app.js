@@ -10,7 +10,6 @@ import resources from './locales/index.js';
 const initState = {
   form: {
     error: '',
-    // rssFeedsUrls: [],
     currentState: 'filling',
   },
   feeds: [],
@@ -61,6 +60,7 @@ export default async () => {
       })
 
       .catch((err) => {
+        watchedState.form.currentState = 'error';
         watchedState.form.error = err.message;
       });
     updateRSS(watchedState, TIMEOUTINTERVAL);
