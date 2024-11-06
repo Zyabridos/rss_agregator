@@ -4,11 +4,13 @@ import parser from './parser.js';
 import { getErrorCode } from './utils.js';
 
 export const getFeedsAndPostsData = (state, url) => {
-  const parsedURL = new URL(url);
-  axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(parsedURL.href)}`))
+  // const parsedURL = new URL(url);
+  // axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(parsedURL.href)}`))
+  axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`))
     .then((response) => {
       const { feedData, postsData } = parser(response.data.contents);
-      const feed = { ...feedData, id: uniqueId(), url: parsedURL.href };
+      // const feed = { ...feedData, id: uniqueId(), url: parsedURL.href };
+      const feed = { ...feedData, id: uniqueId(), url };
       const posts = postsData.map((post) => ({ ...post, id: uniqueId(), feedId: feed.id }));
       /* eslint-disable */
     state.feeds.unshift(feed)

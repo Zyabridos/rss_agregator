@@ -50,7 +50,8 @@ export default async () => {
     e.preventDefault();
     const formData = new FormData(formElements.form);
     const data = Object.fromEntries(formData);
-    const currentURL = new URL((data.url).trim()).href;
+    // const currentURL = new URL((data.url).trim()).href;
+    const currentURL = data.url.trim();
     const rssFeedsUrls = watchedState.feeds.map((feed) => feed.url);
     watchedState.form.currentState = 'sending';
     validateRSS(currentURL, rssFeedsUrls)
@@ -58,11 +59,9 @@ export default async () => {
         watchedState.form.currentState = 'sent';
         getFeedsAndPostsData(watchedState, currentURL);
       })
-
       .catch((err) => {
-        watchedState.form.currentState = 'error';
         watchedState.form.error = err.message;
-        // watchedState.form.currentState = err.message;
+        watchedState.form.currentState = 'error';
       });
     updateRSS(watchedState, TIMEOUTINTERVAL);
   });

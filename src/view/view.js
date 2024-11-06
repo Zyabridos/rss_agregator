@@ -4,13 +4,12 @@ import renderPosts from './posts.js';
 import { renderModal } from './modalWindow.js';
 import renderFeed from './feed.js';
 
-const watch = (formElements, i18n, state) => {
+const render = (formElements, i18n, state) => {
   const elements = { ...formElements };
   const watchedState = onChange(state, (path, value) => {
     switch (path) {
       case 'form.currentState':
-        renderFormState(elements, i18n, value, state.form.error.error);
-        console.log(state.form.error);
+        renderFormState(elements, i18n, value, state.form.error);
         break;
       case 'feeds':
         renderFeed(state, i18n);
@@ -29,4 +28,4 @@ const watch = (formElements, i18n, state) => {
   return watchedState;
 };
 
-export default watch;
+export default render;

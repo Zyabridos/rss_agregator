@@ -20,7 +20,7 @@ const renderHrefPost = (id, title, url) => {
   return href;
 };
 
-const renderPostsBody = (elements, i18n) => {
+export const renderPostsBody = (elements, i18n) => {
   const { postsContainer } = { ...elements };
   postsContainer.innerHTML = '';
   const divContainer = document.createElement('div');
@@ -42,7 +42,6 @@ const renderPostsBody = (elements, i18n) => {
 };
 
 export default (elements, i18n, state) => {
-  renderPostsBody(elements, i18n);
   const postUL = document.querySelector('.list-group.border-0.rounded-0');
   state.posts.forEach((post) => {
     const li = document.createElement('li');
