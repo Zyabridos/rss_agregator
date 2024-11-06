@@ -65,6 +65,8 @@ export default async () => {
     updateRSS(watchedState, TIMEOUTINTERVAL);
   });
 
-  // renderModal(formElements, watchedState);
-  renderSeenPost(formElements, watchedState);
+  console.log(formElements.postsContainer);
+  formElements.postsContainer.addEventListener('click', (event) => {
+    console.log('hey!');
+  });
 };
