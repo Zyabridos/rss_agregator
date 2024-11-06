@@ -1,6 +1,6 @@
 import onChange from 'on-change';
 import renderFormState from './formState.js';
-import renderPosts from './posts.js';
+import renderPosts, { renderPostsBody } from './posts.js';
 import { renderModal } from './modalWindow.js';
 import renderFeed from './feed.js';
 
@@ -11,6 +11,9 @@ const render = (formElements, i18n, state) => {
       case 'form.currentState':
         renderFormState(elements, i18n, value, state.form.error);
         break;
+      case 'form.isValid':
+        renderPostsBody(elements, i18n);
+        break;
       case 'feeds':
         renderFeed(state, i18n);
         break;
@@ -18,6 +21,7 @@ const render = (formElements, i18n, state) => {
         renderPosts(formElements, i18n, state);
         break;
       case 'ui.viewedPostsIDs':
+        console.log('rendering Modal..');
         renderModal(formElements, state);
         break;
       default:

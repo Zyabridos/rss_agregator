@@ -4,18 +4,20 @@ import i18next from 'i18next';
 import { validateRSS } from './utils/utils.js';
 import { updateRSS, getFeedsAndPostsData } from './utils/rssutils.js';
 import watch from './view/view.js';
-import { renderSeenPost } from './view/modalWindow.js';
+import { renderSeenPost, renderModal } from './view/modalWindow.js';
 import resources from './locales/index.js';
 
 const initState = {
   form: {
     error: '',
     currentState: 'filling',
+    isValid: false,
   },
   feeds: [],
   posts: [],
   ui: {
     viewedPostsIDs: [],
+    currentModalID: null,
   },
 };
 
@@ -29,13 +31,11 @@ export default async () => {
     inputLabel: document.querySelector('[for="url-input"]'),
     feedback: document.querySelector('.feedback.m-0'),
     submitButton: document.querySelector('.h-100.btn.btn-lg.btn-primary'),
-    postButton: document.querySelector('.btn.btn-outline-primary.btn-sm'),
-    postLI: document.querySelector('.list-group-item.d-flex'),
     postsContainer: document.querySelector('.posts'),
 
     modalTitle: document.querySelector('.modal-header'),
     modalBody: document.querySelector('.modal-body.text-break'),
-    modalWindow: document.querySelector('.modal-footer .btn-primary'),
+    modalWindow: document.querySelector('.modal-footer.btn-primary'),
   };
 
   const i18n = i18next.createInstance();
@@ -50,7 +50,6 @@ export default async () => {
     e.preventDefault();
     const formData = new FormData(formElements.form);
     const data = Object.fromEntries(formData);
-    // const currentURL = new URL((data.url).trim()).href;
     const currentURL = data.url.trim();
     const rssFeedsUrls = watchedState.feeds.map((feed) => feed.url);
     watchedState.form.currentState = 'sending';
@@ -66,5 +65,6 @@ export default async () => {
     updateRSS(watchedState, TIMEOUTINTERVAL);
   });
 
+  // renderModal(formElements, watchedState);
   renderSeenPost(formElements, watchedState);
 };
