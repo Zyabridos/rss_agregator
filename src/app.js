@@ -62,6 +62,7 @@ export default async () => {
       .catch((err) => {
         watchedState.form.currentState = 'error';
         watchedState.form.error = err.message;
+        // watchedState.form.currentState = err.message;
       });
     updateRSS(watchedState, TIMEOUTINTERVAL);
   });
