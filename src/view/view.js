@@ -18,11 +18,12 @@ const render = (formElements, i18n, state) => {
         renderFeed(state, i18n);
         break;
       case 'posts':
-        renderPosts(formElements, i18n, state);
+        renderPosts(elements, i18n, state);
+        break;
+      case 'ui.currentModalID':
+        renderModal(formElements, state);
         break;
       case 'ui.viewedPostsIDs':
-        console.log('rendering Modal..');
-        renderModal(formElements, state);
         break;
       default:
         break;

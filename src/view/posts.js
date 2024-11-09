@@ -42,6 +42,7 @@ export const renderPostsBody = (elements, i18n) => {
 };
 
 export default (elements, i18n, state) => {
+  const { postsContainer } = elements;
   const postUL = document.querySelector('.list-group.border-0.rounded-0');
   state.posts.forEach((post) => {
     const li = document.createElement('li');

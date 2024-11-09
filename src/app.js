@@ -4,7 +4,7 @@ import i18next from 'i18next';
 import { validateRSS } from './utils/utils.js';
 import { updateRSS, getFeedsAndPostsData } from './utils/rssutils.js';
 import watch from './view/view.js';
-import { renderSeenPost, renderModal } from './view/modalWindow.js';
+import { getCurrentModalID } from './view/modalWindow.js';
 import resources from './locales/index.js';
 
 const initState = {
@@ -17,12 +17,12 @@ const initState = {
   posts: [],
   ui: {
     viewedPostsIDs: [],
-    currentModalID: null,
+    currentModalID: '',
   },
 };
 
 const DEFAULTLNG = 'ru';
-const TIMEOUTINTERVAL = 2000;
+const TIMEOUTINTERVAL = 5000;
 
 export default async () => {
   const formElements = {
@@ -55,6 +55,7 @@ export default async () => {
     watchedState.form.currentState = 'sending';
     validateRSS(currentURL, rssFeedsUrls)
       .then(() => {
+        watchedState.form.isValid = true;
         watchedState.form.currentState = 'sent';
         getFeedsAndPostsData(watchedState, currentURL);
       })
@@ -64,9 +65,5 @@ export default async () => {
       });
     updateRSS(watchedState, TIMEOUTINTERVAL);
   });
-
-  console.log(formElements.postsContainer);
-  formElements.postsContainer.addEventListener('click', (event) => {
-    console.log('hey!');
-  });
+  getCurrentModalID(formElements, watchedState);
 };
