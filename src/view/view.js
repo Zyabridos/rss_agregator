@@ -18,7 +18,7 @@ const render = (formElements, i18n, state) => {
         renderFeed(state, i18n);
         break;
       case 'posts':
-        renderPosts(elements, i18n, state);
+        renderPosts(i18n, state);
         break;
       case 'ui.currentModalID':
         renderModal(formElements, state);
