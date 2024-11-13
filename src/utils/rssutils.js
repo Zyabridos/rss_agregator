@@ -5,7 +5,7 @@ import { getErrorCode } from './utils.js';
 
 export const getFeedsAndPostsData = (state, url) => {
   const parsedURL = new URL(url);
-  axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(parsedURL.href)}`))
+  axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(parsedURL)}`))
     .then((response) => {
       const { feedData, postsData } = parser(response.data.contents);
       const feed = { ...feedData, id: uniqueId(), url: parsedURL.href };
@@ -20,7 +20,7 @@ export const getFeedsAndPostsData = (state, url) => {
   });
 }
 
-export const updateRSS = (state, timeout = 5000) => {
+export const updateRSS = (state) => {
   const promises = state.feeds.map((feed) => {
     axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(new URL(feed.url).href)}`))
       .then((response) => {
@@ -35,7 +35,7 @@ export const updateRSS = (state, timeout = 5000) => {
       });
   });
   return Promise.all(promises)
-    .then(() => {
-      setTimeout(() => updateRSS(state), timeout);
-    });
+    // .then(() => {
+    //   setTimeout(() => updateRSS(state), timeout);
+    // });
 };

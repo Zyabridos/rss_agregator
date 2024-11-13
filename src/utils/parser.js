@@ -3,7 +3,7 @@ export default (data) => {
   const content = parser.parseFromString(data, 'text/xml');
   const errorNode = content.querySelector('parsererror');
   if (errorNode) {
-    const error = new Error(errorNode.textContent);
+    const error = new Error('isNotRSS');
     error.isNotRSS = true;
     throw error;
   } else {

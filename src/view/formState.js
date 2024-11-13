@@ -16,6 +16,7 @@ const caseSent = (elements, i18n) => {
   input.value = '';
   feedback.textContent = i18n.t('success');
   feedback.classList.remove('text-danger');
+  feedback.classList.remove('text-info');
   feedback.classList.add('text-success');
 };
 
@@ -23,6 +24,7 @@ const caseSending = (elements, i18n) => {
   const { input, submitButton, feedback } = elements;
   submitButton.disabled = true;
   input.disabled = true;
+  feedback.classList.add('text-info');
   feedback.textContent = i18n.t('sending');
 };
 

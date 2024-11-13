@@ -22,7 +22,7 @@ const initState = {
 };
 
 const DEFAULTLNG = 'ru';
-const TIMEOUTINTERVAL = 5000;
+const TIMEOUTINTERVAL = 1000;
 
 export default async () => {
   const formElements = {
@@ -56,14 +56,17 @@ export default async () => {
     validateRSS(currentURL, rssFeedsUrls)
       .then(() => {
         watchedState.form.isValid = true;
-        watchedState.form.currentState = 'sent';
         getFeedsAndPostsData(watchedState, currentURL);
+        watchedState.form.currentState = 'sent';
       })
       .catch((err) => {
         watchedState.form.error = err.message;
         watchedState.form.currentState = 'error';
       });
-    updateRSS(watchedState, TIMEOUTINTERVAL);
+    updateRSS(watchedState)
+      .then(() => {
+        setTimeout(() => updateRSS(watchedState), TIMEOUTINTERVAL);
+      });
   });
   getCurrentModalID(formElements, watchedState);
 };
