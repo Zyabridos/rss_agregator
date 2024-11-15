@@ -42,8 +42,8 @@ export const renderPostsBody = (elements, i18n) => {
 };
 
 export default (i18n, state) => {
-  console.log('posts');
   const postUL = document.querySelector('.list-group.border-0.rounded-0');
+  postUL.innerHTML = '';
   state.posts.forEach((post) => {
     const li = document.createElement('li');
     li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');

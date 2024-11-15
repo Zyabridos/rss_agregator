@@ -22,7 +22,7 @@ const initState = {
 };
 
 const DEFAULTLNG = 'ru';
-const TIMEOUTINTERVAL = 1000;
+const TIMEOUTINTERVAL = 5000;
 
 export default async () => {
   const formElements = {
@@ -46,6 +46,8 @@ export default async () => {
   });
   const watchedState = watch(formElements, i18n, initState);
 
+  updateRSS(watchedState, TIMEOUTINTERVAL);
+
   formElements.form.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(formElements.form);
@@ -62,10 +64,6 @@ export default async () => {
       .catch((err) => {
         watchedState.form.error = err.message;
         watchedState.form.currentState = 'error';
-      });
-    updateRSS(watchedState)
-      .then(() => {
-        setTimeout(() => updateRSS(watchedState), TIMEOUTINTERVAL);
       });
   });
   getCurrentModalID(formElements, watchedState);

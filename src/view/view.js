@@ -1,7 +1,7 @@
 import onChange from 'on-change';
+import { renderModal } from './modalWindow.js';
 import renderFormState from './formState.js';
 import renderPosts, { renderPostsBody } from './posts.js';
-import { renderModal } from './modalWindow.js';
 import renderFeed from './feed.js';
 
 const render = (formElements, i18n, state) => {
@@ -22,8 +22,6 @@ const render = (formElements, i18n, state) => {
         break;
       case 'ui.currentModalID':
         renderModal(formElements, state);
-        break;
-      case 'ui.viewedPostsIDs':
         break;
       default:
         break;

@@ -20,7 +20,7 @@ export const getFeedsAndPostsData = (state, url) => {
   });
 }
 
-export const updateRSS = (state) => {
+export const updateRSS = (state, timeout) => {
   const promises = state.feeds.map((feed) => {
     axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(new URL(feed.url).href)}`))
       .then((response) => {
@@ -35,7 +35,7 @@ export const updateRSS = (state) => {
       });
   });
   return Promise.all(promises)
-    // .then(() => {
-    //   setTimeout(() => updateRSS(state), timeout);
-    // });
+    .then(() => {
+      setTimeout(() => updateRSS(state), timeout);
+    });
 };
