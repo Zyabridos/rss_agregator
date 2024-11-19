@@ -57,8 +57,10 @@ export default async () => {
     watchedState.form.currentState = 'sending';
     validateRSS(currentURL, rssFeedsUrls)
       .then(() => {
-        watchedState.form.isValid = true;
         getFeedsAndPostsData(watchedState, currentURL);
+      })
+      .then(() => {
+        watchedState.form.isValid = true;
         watchedState.form.currentState = 'sent';
       })
       .catch((err) => {
