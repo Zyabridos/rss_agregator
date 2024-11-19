@@ -4,7 +4,7 @@ const markPostAsReaded = (postIDtoDeactivate) => {
   pressedLinksTitle.classList.add('link-secondary', 'fw-normal');
 };
 
-export const getCurrentModalID = (formElements, state) => {
+export const formViewedPostsIDsArray = (formElements, state) => {
   const { postsContainer } = formElements;
   postsContainer.addEventListener('click', (e) => {
     const postID = e.target.getAttribute('data-id');
@@ -13,6 +13,7 @@ export const getCurrentModalID = (formElements, state) => {
       state.ui.viewedPostsIDs.push(postID)
       state.ui.currentModalID = postID;
     }
+    return state;
   });
 };
 

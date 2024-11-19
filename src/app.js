@@ -4,7 +4,7 @@ import i18next from 'i18next';
 import { validateRSS } from './utils/utils.js';
 import { updateRSS, getFeedsAndPostsData } from './utils/rssutils.js';
 import watch from './view/view.js';
-import { getCurrentModalID } from './view/modalWindow.js';
+import { formViewedPostsIDsArray } from './view/modalWindow.js';
 import resources from './locales/index.js';
 
 const initState = {
@@ -51,8 +51,7 @@ export default async () => {
   formElements.form.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(formElements.form);
-    const data = Object.fromEntries(formData);
-    const currentURL = data.url.trim();
+    const currentURL = formData.get('url').trim();
     const rssFeedsUrls = watchedState.feeds.map((feed) => feed.url);
     watchedState.form.currentState = 'sending';
     validateRSS(currentURL, rssFeedsUrls)
@@ -68,5 +67,5 @@ export default async () => {
         watchedState.form.currentState = 'error';
       });
   });
-  getCurrentModalID(formElements, watchedState);
+  formViewedPostsIDsArray(formElements, watchedState);
 };
