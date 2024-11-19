@@ -8,9 +8,7 @@ export const validateRSS = (url, urls) => {
     .url('errors.validation.invalidURL')
     .required('errors.validation.required')
     .notOneOf(urls, 'errors.validation.repeat');
-  return schema.validate(url)
-    .then(() => null)
-    .catch((error) => error);
+  return schema.validate(url);
 };
 
 export const setAttributes = (element, attributes) => {

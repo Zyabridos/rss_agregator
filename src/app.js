@@ -1,7 +1,7 @@
 import './styles.scss';
 import 'bootstrap';
 import i18next from 'i18next';
-import { validateRSS, getErrorCode } from './utils/utils.js';
+import { validateRSS } from './utils/utils.js';
 import { updateRSS, getFeedsAndPostsData } from './utils/rssutils.js';
 import watch from './view/view.js';
 import { formViewedPostsIDsArray } from './view/modalWindow.js';
