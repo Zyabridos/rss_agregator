@@ -8,7 +8,9 @@ export const validateRSS = (url, urls) => {
     .url('errors.validation.invalidURL')
     .required('errors.validation.required')
     .notOneOf(urls, 'errors.validation.repeat');
-  return schema.validate(url);
+  return schema.validate(url)
+    .then(() => null)
+    .catch((error) => error);
 };
 
 export const setAttributes = (element, attributes) => {
@@ -25,6 +27,6 @@ export const getErrorCode = (error) => {
   if (axios.isAxiosError(error)) {
     return 'errors.networkError';
   }
-  return error.message ?? 'unknown error has occured';
+  return error?? 'unknown error has occured';
 };
 

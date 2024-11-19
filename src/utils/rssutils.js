@@ -16,7 +16,8 @@ export const getFeedsAndPostsData = (state, url) => {
     return state;
   })
   .catch((err) => {
-    state.form.error = getErrorCode(err);
+    state.form.currentState = 'error';
+    state.form.error = getErrorCode(err.message);
   });
 }
 
