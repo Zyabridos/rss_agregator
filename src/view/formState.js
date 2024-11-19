@@ -20,18 +20,17 @@ const caseSent = (elements, i18n) => {
   feedback.classList.add('text-success');
 };
 
-const caseSending = (elements, i18n) => {
+const caseSending = (elements) => {
   const { input, submitButton, feedback } = elements;
   submitButton.disabled = true;
   input.disabled = true;
   feedback.classList.add('text-info');
-  feedback.textContent = i18n.t('sending');
 };
 
 export default (elements, i18n, formCurrentState, errorValue) => {
   switch (formCurrentState) {
     case 'sending':
-      caseSending(elements, i18n);
+      caseSending(elements);
       break;
     case 'sent':
       caseSent(elements, i18n);

@@ -1,7 +1,6 @@
 export default {
   translation: {
     success: 'RSS успешно загружен',
-    sending: 'Пытаюсь загрузить RSS',
     errors: {
       validation:
           {
