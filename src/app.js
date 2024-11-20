@@ -57,6 +57,7 @@ export default async () => {
     validateRSS(currentURL, rssFeedsUrls)
       .then(() => {
         getFeedsAndPostsData(watchedState, currentURL);
+        return watchedState.form;
       })
       .then(() => {
         watchedState.form.isValid = true;
