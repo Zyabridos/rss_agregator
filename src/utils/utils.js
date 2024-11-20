@@ -20,10 +20,10 @@ export const setAttributes = (element, attributes) => {
 
 export const getErrorCode = (error) => {
   if (error.isNotRSS) {
-    return 'errors.isNotRSS';
+    return 'error.isNotRSS';
   }
   if (axios.isAxiosError(error)) {
-    return 'errors.networkError';
+    return 'error.networkError';
   }
   return error?? 'unknown error has occured';
 };

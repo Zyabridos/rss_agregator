@@ -56,12 +56,13 @@ export default async () => {
     watchedState.form.currentState = 'sending';
     validateRSS(currentURL, rssFeedsUrls)
       .then(() => {
-        getFeedsAndPostsData(watchedState, currentURL);
-        return watchedState.form;
+        watchedState.form.isValid = true;
+        watchedState.form.currentState = 'sending';
+        // watchedState.form.rssFeedsUrls.push(currentURL);
+        watchedState.form.currentState = 'sent';
       })
       .then(() => {
-        watchedState.form.isValid = true;
-        watchedState.form.currentState = 'sent';
+        getFeedsAndPostsData(watchedState, currentURL);
       })
       .catch((err) => {
         watchedState.form.error = err.message;
