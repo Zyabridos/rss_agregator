@@ -55,14 +55,10 @@ export default async () => {
     const rssFeedsUrls = watchedState.feeds.map((feed) => feed.url);
     watchedState.form.currentState = 'sending';
     validateRSS(currentURL, rssFeedsUrls)
+      .then(() => getFeedsAndPostsData(watchedState, currentURL))
       .then(() => {
         watchedState.form.isValid = true;
-        watchedState.form.currentState = 'sending';
-        // watchedState.form.rssFeedsUrls.push(currentURL);
         watchedState.form.currentState = 'sent';
-      })
-      .then(() => {
-        getFeedsAndPostsData(watchedState, currentURL);
       })
       .catch((err) => {
         watchedState.form.error = err.message;
