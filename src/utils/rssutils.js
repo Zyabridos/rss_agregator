@@ -5,7 +5,7 @@ import { getErrorCode } from './utils.js';
 
 export const getFeedsAndPostsData = (state, url) => {
   const parsedURL = new URL(url);
-  axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(parsedURL)}`))
+  return axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(parsedURL)}`))
     .then((response) => {
       const { feedData, postsData } = parser(response.data.contents);
       const feed = { ...feedData, id: uniqueId(), url: parsedURL.href };
@@ -18,7 +18,6 @@ export const getFeedsAndPostsData = (state, url) => {
   .catch((err) => {
      state.form = { currentState: 'error', error: getErrorCode(err.message)};
   });
-  return state;
 }
 
 export const updateRSS = (state, timeout) => {
