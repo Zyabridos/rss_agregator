@@ -1,28 +1,28 @@
 import axios from 'axios';
 import { uniqueId } from 'lodash';
 import parser from './parser.js';
-import { getErrorCode } from './utils.js';
+import { getErrorCode, proxifyURL } from './utils.js';
 
 export const getFeedsAndPostsData = (state, url) => {
-  const parsedURL = new URL(url);
-  return axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(parsedURL)}`))
+  const proxedURL = proxifyURL(url);
+  axios.get(proxedURL)
     .then((response) => {
       const { feedData, postsData } = parser(response.data.contents);
-      const feed = { ...feedData, id: uniqueId(), url: parsedURL.href };
+      const feed = { ...feedData, id: uniqueId(), url };
       const posts = postsData.map((post) => ({ ...post, id: uniqueId(), feedId: feed.id }));
       /* eslint-disable */
     state.feeds.unshift(feed)
     state.posts = [...posts, ...state.posts];
     return state;
   })
-  .catch((err) => {
+  .catch((err) => { 
      state.form = { currentState: 'error', error: getErrorCode(err.message)};
   });
 }
 
 export const updateRSS = (state, timeout) => {
   const promises = state.feeds.map((feed) => {
-    axios.get((`https://allorigins.hexlet.app/get?url=${encodeURIComponent(new URL(feed.url).href)}`))
+    axios.get(proxifyURL(feed.url))
       .then((response) => {
         const { postsData } = parser(response.data.contents)
         const displayedPostLinks = state.posts.map((post) => post.url);

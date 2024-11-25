@@ -28,3 +28,10 @@ export const getErrorCode = (error) => {
   return error?? 'unknown error has occured';
 };
 
+export const proxifyURL = (url) => {
+  const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app');
+  urlWithProxy.searchParams.set('url', url);
+  urlWithProxy.searchParams.set('disableCache', 'true');
+  return urlWithProxy.toString();
+} 
+
