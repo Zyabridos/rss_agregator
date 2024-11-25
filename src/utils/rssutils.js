@@ -18,6 +18,7 @@ export const getFeedsAndPostsData = (state, url) => {
   .catch((err) => {
      state.form = { currentState: 'error', error: getErrorCode(err.message)};
   });
+  return state;
 }
 
 export const updateRSS = (state, timeout) => {
