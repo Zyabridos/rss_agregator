@@ -25,7 +25,7 @@ const initState = {
 };
 
 const DEFAULTLNG = 'ru';
-const TIMEOUTINTERVAL = 5000;
+const UPDATETIMEOUTINTERVAL = 5000;
 
 export default async () => {
   const formElements = {
@@ -35,6 +35,7 @@ export default async () => {
     feedback: document.querySelector('.feedback.m-0'),
     submitButton: document.querySelector('.h-100.btn.btn-lg.btn-primary'),
     postsContainer: document.querySelector('.posts'),
+    feedsContainer: document.querySelector('.feeds'),
 
     modalTitle: document.querySelector('.modal-header'),
     modalBody: document.querySelector('.modal-body.text-break'),
@@ -49,7 +50,7 @@ export default async () => {
   });
   const watchedState = watch(formElements, i18n, initState);
 
-  updateRSS(watchedState, TIMEOUTINTERVAL);
+  updateRSS(watchedState, UPDATETIMEOUTINTERVAL);
 
   formElements.form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -60,14 +61,10 @@ export default async () => {
       .then(() => {
         watchedState.form.isValid = true;
       })
-      .then(() => getFeedsAndPostsData(watchedState, currentURL))
-      // .then(() => {
-      //   watchedState.form.isValid = true;
-      // })
-      .catch((err) => {
-        watchedState.form.error = err.message;
-        // watchedState.form.currentState = 'error';
-      });
+      .then(() => getFeedsAndPostsData(watchedState, currentURL));
+    // .catch((err) => {
+    //   watchedState.form.error = err.message;
+    // });
   });
   formViewedPostsIDsArray(formElements, watchedState);
 };

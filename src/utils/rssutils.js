@@ -3,10 +3,11 @@ import { uniqueId } from 'lodash';
 import parser from './parser.js';
 import { getErrorCode, proxifyURL } from './utils.js';
 
-export const getFeedsAndPostsData = (state, url) => {
+const TIMEOUTINTERVAL = 5000;
+export const getFeedsAndPostsData = (state, url, timeoutInterval = TIMEOUTINTERVAL) => {
   state.loadingStatus = { status: 'sending', error: '' };
   const proxedURL = proxifyURL(url);
-  return axios.get(proxedURL)
+  return axios.get(proxedURL, { signal: AbortSignal.timeout(timeoutInterval) })
     .then((response) => {
       const { feedData, postsData } = parser(response.data.contents);
       const feed = { ...feedData, id: uniqueId(), url };
@@ -22,8 +23,8 @@ export const getFeedsAndPostsData = (state, url) => {
     });
 };
 
-export const updateRSS = (state, timeout) => {
-  const promises = state.feeds.map((feed) => axios.get(proxifyURL(feed.url))
+export const updateRSS = (state, updateTimeout, timeoutInterval = TIMEOUTINTERVAL) => {
+  const promises = state.feeds.map((feed) => axios.get(proxifyURL(feed.url), { signal: AbortSignal.timeout(timeoutInterval) })
     .then((response) => {
       const { postsData } = parser(response.data.contents);
       const displayedPostLinks = state.posts.map((post) => post.url);
@@ -36,6 +37,6 @@ export const updateRSS = (state, timeout) => {
     }));
   return Promise.all(promises)
     .then(() => {
-      setTimeout(() => updateRSS(state), timeout);
+      setTimeout(() => updateRSS(state), updateTimeout);
     });
 };

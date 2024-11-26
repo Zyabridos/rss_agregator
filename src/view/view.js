@@ -28,7 +28,6 @@ const render = (formElements, i18n, state) => {
         break;
     }
   });
-
   return watchedState;
 };
 
