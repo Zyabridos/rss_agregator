@@ -61,10 +61,10 @@ export default async () => {
       .then(() => {
         watchedState.form.isValid = true;
       })
-      .then(() => getFeedsAndPostsData(watchedState, currentURL));
-    // .catch((err) => {
-    //   watchedState.form.error = err.message;
-    // });
+      .then(() => getFeedsAndPostsData(watchedState, currentURL))
+      .catch((err) => {
+        watchedState.form.error = err.message;
+      });
   });
   formViewedPostsIDsArray(formElements, watchedState);
 };
