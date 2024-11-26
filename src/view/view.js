@@ -1,18 +1,16 @@
 import onChange from 'on-change';
 import { renderModal } from './modalWindow.js';
-import renderFormState from './formState.js';
-import renderPosts, { renderPostsBody } from './posts.js';
+import renderPosts from './posts.js';
 import renderFeed from './feed.js';
+import renderLoadingStatus from './loadingState.js';
+import renderErrors from './errorsHandler.js';
 
 const render = (formElements, i18n, state) => {
   const elements = { ...formElements };
   const watchedState = onChange(state, (path, value) => {
     switch (path) {
-      case 'form.currentState':
-        renderFormState(elements, i18n, value, state.form.error);
-        break;
-      case 'form.isValid':
-        renderPostsBody(elements, i18n);
+      case 'form.error':
+        renderErrors(value, elements, i18n);
         break;
       case 'feeds':
         renderFeed(state, i18n);
@@ -21,7 +19,10 @@ const render = (formElements, i18n, state) => {
         renderPosts(i18n, state);
         break;
       case 'ui.currentModalID':
-        renderModal(formElements, state);
+        renderModal(elements, state);
+        break;
+      case 'loadingStatus':
+        renderLoadingStatus(elements, i18n, value);
         break;
       default:
         break;

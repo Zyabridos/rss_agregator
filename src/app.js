@@ -10,8 +10,11 @@ import resources from './locales/index.js';
 const initState = {
   form: {
     error: '',
-    currentState: 'filling',
     isValid: false,
+  },
+  loadingStatus: {
+    error: '',
+    status: '',
   },
   feeds: [],
   posts: [],
@@ -53,16 +56,17 @@ export default async () => {
     const formData = new FormData(formElements.form);
     const currentURL = formData.get('url').trim();
     const rssFeedsUrls = watchedState.feeds.map((feed) => feed.url);
-    watchedState.form.currentState = 'sending';
     validateRSS(currentURL, rssFeedsUrls)
-      .then(() => getFeedsAndPostsData(watchedState, currentURL))
       .then(() => {
         watchedState.form.isValid = true;
-        watchedState.form.currentState = 'sent';
       })
+      .then(() => getFeedsAndPostsData(watchedState, currentURL))
+      // .then(() => {
+      //   watchedState.form.isValid = true;
+      // })
       .catch((err) => {
         watchedState.form.error = err.message;
-        watchedState.form.currentState = 'error';
+        // watchedState.form.currentState = 'error';
       });
   });
   formViewedPostsIDsArray(formElements, watchedState);

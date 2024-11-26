@@ -1,12 +1,5 @@
-const renderErrors = (formElements, errorValue, i18n) => {
-  const { feedback, input, submitButton } = { ...formElements };
-  feedback.classList.add('text-danger');
-  feedback.classList.remove('text-success');
-  feedback.textContent = i18n.t(errorValue);
-  input.focus();
-  input.disabled = false;
-  submitButton.disabled = false;
-};
+import { renderPostsBody } from './posts.js';
+import renderErrors from './errorsHandler.js';
 
 const caseSent = (elements, i18n) => {
   const { input, submitButton, feedback } = elements;
@@ -18,6 +11,7 @@ const caseSent = (elements, i18n) => {
   feedback.classList.remove('text-danger');
   feedback.classList.remove('text-info');
   feedback.classList.add('text-success');
+  renderPostsBody(elements, i18n);
 };
 
 const caseSending = (elements) => {
@@ -27,8 +21,8 @@ const caseSending = (elements) => {
   feedback.classList.add('text-info');
 };
 
-export default (elements, i18n, formCurrentState, errorValue) => {
-  switch (formCurrentState) {
+export default (elements, i18n, loadingStatus) => {
+  switch (loadingStatus.status) {
     case 'sending':
       caseSending(elements);
       break;
@@ -36,9 +30,9 @@ export default (elements, i18n, formCurrentState, errorValue) => {
       caseSent(elements, i18n);
       break;
     case 'error':
-      renderErrors(elements, errorValue, i18n);
+      renderErrors(loadingStatus.error, elements, i18n);
       break;
     default:
-      throw new Error(`Unknown state of form: ${formCurrentState}`);
+      throw new Error(`Unknown state of loading process: ${loadingStatus}`);
   }
 };

@@ -19,11 +19,12 @@ export const setAttributes = (element, attributes) => {
 };
 
 export const getErrorCode = (error) => {
-  if (error.isNotRSS) {
-    return 'error.isNotRSS';
+  if (error === 'isNotRSS') {
+    // return 'error.isNotRSS';
+    return 'loadingStatusError.isNotRSS'
   }
   if (axios.isAxiosError(error)) {
-    return 'error.networkError';
+    return 'loadingStatusError.networkError';
   }
   return error?? 'unknown error has occured';
 };

@@ -9,8 +9,7 @@ export const formViewedPostsIDsArray = (formElements, state) => {
   postsContainer.addEventListener('click', (e) => {
     const postID = e.target.getAttribute('data-id');
     if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
-      /* eslint-disable */
-      state.ui.viewedPostsIDs.push(postID)
+      state.ui.viewedPostsIDs.push(postID);
       state.ui.currentModalID = postID;
     }
     return state;
