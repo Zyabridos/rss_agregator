@@ -3,7 +3,7 @@ import { uniqueId } from 'lodash';
 import parser from './parser.js';
 import { getErrorCode, proxifyURL } from './utils.js';
 
-const TIMEOUTINTERVAL = 5000;
+const TIMEOUTINTERVAL = 4500;
 export const getFeedsAndPostsData = (state, url, timeoutInterval = TIMEOUTINTERVAL) => {
   state.loadingStatus = { status: 'sending', error: '' };
   const proxedURL = proxifyURL(url);
