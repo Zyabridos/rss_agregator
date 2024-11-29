@@ -1,5 +1,6 @@
 export default (state, i18n) => {
   const feedsContainer = document.querySelector('.col-md-10.feeds');
+  feedsContainer.innerHTML = '';
   const cardDiv1 = document.createElement('div');
   cardDiv1.classList.add('card', 'border-0');
   const cardDiv2 = document.createElement('div');

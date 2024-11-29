@@ -61,7 +61,10 @@ export default async () => {
       .then(() => {
         watchedState.form.isValid = true;
       })
-      .then(() => getFeedsAndPostsData(watchedState, currentURL))
+      .then(() => {
+        getFeedsAndPostsData(watchedState, currentURL);
+        console.log(watchedState);
+      })
       .catch((err) => {
         watchedState.form.error = err.message;
       });
