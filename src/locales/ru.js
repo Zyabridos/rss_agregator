@@ -9,8 +9,10 @@ export default {
       closeModalButton: 'Закрыть',
       readFullArticle: 'Читать полностью',
     },
-    success: 'RSS успешно загружен',
-    sendingData: 'Загружаю RSS...',
+    loadingStatusState: {
+      success: 'RSS успешно загружен',
+      sendingData: 'Загружаю RSS...',
+    },
     errors: {
       validation:
           {

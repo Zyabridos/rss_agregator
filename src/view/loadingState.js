@@ -6,7 +6,7 @@ const caseSent = (elements, i18n) => {
   submitButton.disabled = false;
   input.disabled = false;
   input.value = '';
-  feedback.textContent = i18n.t('success');
+  feedback.textContent = i18n.t('loadingStatusState.success');
   feedback.classList.remove('text-danger');
   feedback.classList.remove('text-info');
   feedback.classList.add('text-success');
@@ -16,7 +16,9 @@ const caseSending = (elements, i18n) => {
   const { input, submitButton, feedback } = elements;
   submitButton.disabled = true;
   input.disabled = true;
+  feedback.classList.remove('text-danger');
   feedback.classList.add('text-info');
+  feedback.textContent = i18n.t('loadingStatusState.sendingData');
 };
 
 export default (elements, i18n, loadingStatus) => {
