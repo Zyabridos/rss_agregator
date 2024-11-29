@@ -5,8 +5,7 @@ import { getErrorCode, proxifyURL } from './utils.js';
 
 const TIMEOUTINTERVAL = 4500;
 export const getFeedsAndPostsData = (state, url, timeoutInterval = TIMEOUTINTERVAL) => {
-  const watchedState = state;
-  watchedState.loadingStatus = { status: 'sending', error: '' };
+  state.loadingStatus = { status: 'sending', error: '' };
   const proxedURL = proxifyURL(url);
   return axios.get(proxedURL, { signal: AbortSignal.timeout(timeoutInterval) })
     .then((response) => {
@@ -14,33 +13,30 @@ export const getFeedsAndPostsData = (state, url, timeoutInterval = TIMEOUTINTERV
       const feed = { ...feedData, id: uniqueId(), url };
       const posts = postsData.map((post) => ({ ...post, id: uniqueId(), feedId: feed.id }));
 
-      watchedState.feeds.unshift(feed);
-      watchedState.posts = [...posts, ...watchedState.posts];
-      watchedState.loadingStatus = { status: 'sent', error: '' };
-      return watchedState;
+      state.feeds.unshift(feed);
+      state.posts = [...posts, ...state.posts];
+      state.loadingStatus = { status: 'sent', error: '' };
+      return state;
     })
     .catch((err) => {
-      watchedState.loadingStatus = { error: getErrorCode(err.message), status: 'error' };
+      state.loadingStatus = { error: getErrorCode(err.message), status: 'error' };
     });
 };
 
 export const updateRSS = (state, updateTimeout, timeoutInterval = TIMEOUTINTERVAL) => {
-  const watchedState = state;
-  const promises = watchedState.feeds.map(
-    (feed) => axios.get(proxifyURL(feed.url), { signal: AbortSignal.timeout(timeoutInterval) })
-      .then((response) => {
-        const { postsData } = parser(response.data.contents);
-        const displayedPostLinks = watchedState.posts.map((post) => post.url);
-        const newPosts = postsData.filter((post) => !displayedPostLinks.includes(post.url));
-        watchedState.posts = [...newPosts, ...watchedState.posts];
-        return watchedState;
-      })
-      .catch((err) => {
-        watchedState.loadingStatus = { error: getErrorCode(err.message), status: 'error' };
-      }),
-  );
+  const promises = state.feeds.map((feed) => axios.get(proxifyURL(feed.url), { signal: AbortSignal.timeout(timeoutInterval) })
+    .then((response) => {
+      const { postsData } = parser(response.data.contents);
+      const displayedPostLinks = state.posts.map((post) => post.url);
+      const newPosts = postsData.filter((post) => !displayedPostLinks.includes(post.url));
+      state.posts = [...newPosts, ...state.posts];
+      return state;
+    })
+    .catch((err) => {
+      state.loadingStatus = { error: getErrorCode(err.message), status: 'error' };
+    }));
   return Promise.all(promises)
     .then(() => {
-      setTimeout(() => updateRSS(watchedState), updateTimeout);
+      setTimeout(() => updateRSS(state), updateTimeout);
     });
 };

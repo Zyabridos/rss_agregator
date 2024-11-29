@@ -1,8 +1,15 @@
 export default {
   translation: {
+    interface: {
+      header: 'RSS агрегатор',
+      description: 'Начните читать RSS сегодня! Это легко, это красиво.',
+      submitButton: 'Добавить',
+      example1: 'Пример 1:  https://lorem-rss.hexlet.app/feed',
+      example2: 'Пример 2:  https://meduza.io/rss2/all',
+      closeModalButton: 'Закрыть',
+      readFullArticle: 'Читать полностью',
+    },
     success: 'RSS успешно загружен',
-    networkError: 'Ошибка сети',
-    as: 'aaaa',
     errors: {
       validation:
           {
@@ -10,7 +17,6 @@ export default {
             invalidURL: 'Ссылка должна быть валидным URL',
             repeat: 'RSS уже существует',
           },
-      networkError: 'Ошибка сети',
     },
     loadingStatusError: {
       isNotRSS: 'Ресурс не содержит валидный RSS',
