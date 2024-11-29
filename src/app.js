@@ -63,7 +63,6 @@ export default async () => {
       })
       .then(() => {
         getFeedsAndPostsData(watchedState, currentURL);
-        console.log(watchedState);
       })
       .catch((err) => {
         watchedState.form.error = err.message;

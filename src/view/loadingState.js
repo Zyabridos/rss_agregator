@@ -1,4 +1,3 @@
-import { renderPostsBody } from './posts.js';
 import renderErrors from './errorsHandler.js';
 
 const caseSent = (elements, i18n) => {
@@ -11,7 +10,6 @@ const caseSent = (elements, i18n) => {
   feedback.classList.remove('text-danger');
   feedback.classList.remove('text-info');
   feedback.classList.add('text-success');
-  renderPostsBody(elements, i18n);
 };
 
 const caseSending = (elements) => {
