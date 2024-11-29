@@ -9,7 +9,7 @@
 A web app for real-time reading of RSS feeds with an automatic update of 5 seconds interval.
 > [!NOTE]
 > Deployed prject:
-> [Demo version](https://rss-agregator-d8l4h1fz1-zyabridos-projects.vercel.app/)
+> [Demo version](https://rss-agregator-qth9i5on6-zyabridos-projects.vercel.app/?vercelToolbarCode=FlxrWIDODU_qwPc)
 
 ### Minimum system requirments
 

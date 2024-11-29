@@ -22,6 +22,7 @@ const renderHrefPost = (id, title, url) => {
 
 export default (i18n, state, elements) => {
   const { postsContainer } = { ...elements };
+  postsContainer.innerHTML = '';
 
   const card = document.createElement('div');
   card.classList.add('card', 'border-0');
