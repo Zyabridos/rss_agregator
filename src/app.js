@@ -6,6 +6,7 @@ import { updateRSS, getFeedsAndPostsData } from './utils/rssutils.js';
 import watch from './view/view.js';
 import { formViewedPostsIDsArray } from './view/modalWindow.js';
 import resources from './locales/index.js';
+import addTranslations from './view/initialPageTexts.js';
 
 const initState = {
   form: {
@@ -48,6 +49,9 @@ export default async () => {
     debug: true,
     lng: DEFAULTLNG,
   });
+
+  addTranslations(i18n);
+
   const watchedState = watch(formElements, i18n, initState);
 
   updateRSS(watchedState, UPDATETIMEOUTINTERVAL);

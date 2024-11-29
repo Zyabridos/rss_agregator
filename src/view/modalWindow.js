@@ -5,12 +5,13 @@ const markPostAsReaded = (postIDtoDeactivate) => {
 };
 
 export const formViewedPostsIDsArray = (formElements, state) => {
+  const watchedState = state;
   const { postsContainer } = formElements;
   postsContainer.addEventListener('click', (e) => {
     const postID = e.target.getAttribute('data-id');
     if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
-      state.ui.viewedPostsIDs.push(postID);
-      state.ui.currentModalID = postID;
+      watchedState.ui.viewedPostsIDs.push(postID);
+      watchedState.ui.currentModalID = postID;
     }
     return state;
   });
