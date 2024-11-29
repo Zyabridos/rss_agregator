@@ -10,6 +10,7 @@ export default {
       readFullArticle: 'Читать полностью',
     },
     success: 'RSS успешно загружен',
+    sendingData: 'Загружаю RSS...',
     errors: {
       validation:
           {

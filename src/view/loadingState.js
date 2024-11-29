@@ -12,7 +12,7 @@ const caseSent = (elements, i18n) => {
   feedback.classList.add('text-success');
 };
 
-const caseSending = (elements) => {
+const caseSending = (elements, i18n) => {
   const { input, submitButton, feedback } = elements;
   submitButton.disabled = true;
   input.disabled = true;
@@ -22,7 +22,7 @@ const caseSending = (elements) => {
 export default (elements, i18n, loadingStatus) => {
   switch (loadingStatus.status) {
     case 'sending':
-      caseSending(elements);
+      caseSending(elements, i18n);
       break;
     case 'sent':
       caseSent(elements, i18n);
