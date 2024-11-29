@@ -8,7 +8,11 @@ import { formViewedPostsIDsArray } from './view/modalWindow.js';
 import resources from './locales/index.js';
 import addTranslations from './view/initialPageTexts.js';
 
+const DEFAULTLNG = 'ru';
+const UPDATETIMEOUTINTERVAL = 5000;
+
 const initState = {
+  lng: DEFAULTLNG,
   form: {
     error: '',
     isValid: false,
@@ -24,9 +28,6 @@ const initState = {
     currentModalID: '',
   },
 };
-
-const DEFAULTLNG = 'ru';
-const UPDATETIMEOUTINTERVAL = 5000;
 
 export default async () => {
   const formElements = {
@@ -47,7 +48,7 @@ export default async () => {
   i18n.init({
     resources,
     debug: true,
-    lng: DEFAULTLNG,
+    lng: initState.lng,
   });
 
   addTranslations(i18n);
